@@ -5,8 +5,7 @@ The goal of *ReactiveMongo Extensions* is to provide all the necessary tools for
 > **Since ReactiveMongo 0.11, the useful functions are available directly in the [driver](../ReactiveMongo), so these extensions are not updated, and it's recommended to directly use the driver.**
 
 
-[![Build Status](https://travis-ci.org/playalot/ReactiveMongo-Extensions.svg?branch=0.10.x)](https://travis-ci.org/playalot/ReactiveMongo-Extensions)
-![Progress](http://progressed.io/bar/70?title=stable)
+[![Build Status](https://travis-ci.org/playalot/ReactiveMongo-Extensions.svg?branch=master)](https://travis-ci.org/playalot/ReactiveMongo-Extensions)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.11/)
 

@@ -26,8 +26,8 @@ import reactivemongo.api.commands.{ GetLastError, WriteResult }
 import play.modules.reactivemongo.json._
 import reactivemongo.extensions.dao.{ Dao, LifeCycle, ReflexiveLifeCycle }
 import reactivemongo.extensions.json.dsl.JsonDsl._
-import play.api.libs.json.{ JsError, JsObject, JsSuccess, Json, OFormat, OWrites, Reads, Writes }
-import play.api.libs.iteratee.{ Enumerator, Iteratee }
+import play.api.libs.json.{ JsObject, Json, OFormat, OWrites, Writes }
+import play.api.libs.iteratee.Iteratee
 import reactivemongo.play.json.collection.JSONCollection
 
 /** A DAO implementation that operates on JSONCollection using JsObject.

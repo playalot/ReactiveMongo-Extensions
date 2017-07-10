@@ -7,7 +7,7 @@ SbtScalariform.scalariformSettings
 
 lazy val commonSettings = Seq(
   organization := "cn.playalot",
-  version := "0.12.3",
+  version := "0.12.4",
   scalaVersion  := "2.11.11",
   scalacOptions := Seq(
     "-unchecked",
@@ -65,7 +65,7 @@ lazy val publishSettings = Seq(
     </developers>)
 
 val travisSettings = Seq(
-  Travis.travisSnapshotBranches := Seq("0.11.x", "0.10.5.akka23-SNAPSHOT"),
+  Travis.travisSnapshotBranches := Seq("0.11.x"),
   commands += Travis.travisCommand
 )
 

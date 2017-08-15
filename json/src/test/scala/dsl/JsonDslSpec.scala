@@ -23,6 +23,7 @@ import play.api.libs.json._
 import reactivemongo.play.json.BSONFormats._
 import JsonDsl._
 import org.joda.time.DateTime
+import joda.JodaWrites._
 
 class JsonDslSpec extends FlatSpec with Matchers {
 

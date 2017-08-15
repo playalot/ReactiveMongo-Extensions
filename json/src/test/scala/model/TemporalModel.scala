@@ -22,6 +22,8 @@ import reactivemongo.extensions.util.Logger
 import reactivemongo.play.json.BSONFormats._
 import play.api.libs.json.Json
 import org.joda.time.DateTime
+import joda.JodaWrites._
+import joda.JodaReads._
 
 case class TemporalModel(
 	_id: BSONObjectID = BSONObjectID.generate,

@@ -1,6 +1,9 @@
 package reactivemongo.extensions
 
-import scala.concurrent.{ Future, ExecutionContext }
+import org.joda.time.DateTime
+import play.api.libs.json.{ JsNumber, JsValue, Writes }
+
+import scala.concurrent.{ ExecutionContext, Future }
 
 object Implicits {
 

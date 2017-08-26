@@ -1,4 +1,4 @@
-package joda
+package reactivemongo.extensions.json.joda
 
 import org.joda.time._
 import org.joda.time.format._

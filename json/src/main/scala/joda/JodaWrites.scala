@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009-2017 Lightbend Inc. <https://www.lightbend.com>
  */
-package joda
+package reactivemongo.extensions.json.joda
 
 import org.joda.time._
 import play.api.libs.json._

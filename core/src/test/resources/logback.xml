@@ -1,5 +1,5 @@
 <configuration>
-  <conversionRule conversionWord="coloredLevel" converterClass="reactivemongo.extensions.joda.ColoredLevel" />
+  <conversionRule conversionWord="coloredLevel" converterClass="reactivemongo.extensions.util.ColoredLevel" />
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>

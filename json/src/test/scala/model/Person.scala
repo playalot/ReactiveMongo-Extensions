@@ -24,8 +24,7 @@ case class Person(
 	surname: String,
 	fullname: String,
 	age: Int,
-	country: String
-)
+	country: String)
 
 object Person {
 	implicit val personFormat = Json.format[Person]

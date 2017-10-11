@@ -29,8 +29,7 @@ case class TemporalModel(
 	name: String,
 	surname: String,
 	createdAt: DateTime = DateTime.now,
-	updatedAt: DateTime = DateTime.now
-)
+	updatedAt: DateTime = DateTime.now)
 
 object TemporalModel {
 	implicit val temporalModelFormat = Json.format[TemporalModel]

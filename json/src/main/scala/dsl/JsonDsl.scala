@@ -163,10 +163,7 @@ trait JsonDsl {
 		Json.obj(
 			"$push" -> Json.obj(
 				field -> Json.obj(
-					"$each" -> Json.arr(values: _*)
-				)
-			)
-		)
+					"$each" -> Json.arr(values: _*))))
 	}
 
 	def $pull(element: Element): JsObject = {
@@ -211,8 +208,8 @@ trait JsonDsl {
 	 *
 	 */
 	case class CompositeExpression(field: String, value: JsObject)
-			extends Expression[JsObject]
-			with ComparisonOperators {
+		extends Expression[JsObject]
+		with ComparisonOperators {
 		override def append(value: JsObject): JsObject = {
 			this.value ++ value
 		}

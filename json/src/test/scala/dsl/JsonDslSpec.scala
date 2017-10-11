@@ -33,8 +33,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 		val expected = Json.obj(
 			"name" -> "foo",
 			"surname" -> "bar",
-			"age" -> 32
-		)
+			"age" -> 32)
 
 		dsl shouldBe expected
 	}
@@ -50,14 +49,11 @@ class JsonDslSpec extends FlatSpec with Matchers {
 			"birthday" -> dateTime,
 			"prefs" -> $doc(
 				"pref1" -> "value1",
-				"pref2" -> 1341453453L
-			),
+				"pref2" -> 1341453453L),
 			"sizes" -> $arr("M", "L"),
 			"notices" -> $arr(
 				$doc("key1" -> "value1"),
-				$doc("key2" -> "value2")
-			)
-		)
+				$doc("key2" -> "value2")))
 
 		val expected = Json.obj(
 			"name" -> "haydar",
@@ -67,14 +63,11 @@ class JsonDslSpec extends FlatSpec with Matchers {
 			"birthday" -> dateTime.getMillis,
 			"prefs" -> Json.obj(
 				"pref1" -> "value1",
-				"pref2" -> 1341453453L
-			),
+				"pref2" -> 1341453453L),
 			"sizes" -> Json.arr("M", "L"),
 			"notices" -> Json.arr(
 				Json.obj("key1" -> "value1"),
-				Json.obj("key2" -> "value2")
-			)
-		)
+				Json.obj("key2" -> "value2")))
 
 		document shouldBe expected
 	}
@@ -161,9 +154,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 		val expected = Json.obj(
 			"$or" -> Json.arr(
 				Json.obj("qty" -> Json.obj("$lt" -> 20, "$gte" -> 10)),
-				Json.obj("sale" -> true)
-			)
-		)
+				Json.obj("sale" -> true)))
 		dsl shouldBe expected
 	}
 
@@ -173,9 +164,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 		val expected = Json.obj(
 			"$and" -> Json.arr(
 				Json.obj("qty" -> Json.obj("$lt" -> 20, "$gte" -> 10)),
-				Json.obj("sale" -> true)
-			)
-		)
+				Json.obj("sale" -> true)))
 		dsl shouldBe expected
 	}
 
@@ -193,9 +182,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 			"$nor" -> Json.arr(
 				Json.obj("price" -> 1.99),
 				Json.obj("qty" -> Json.obj("$lt" -> 20)),
-				Json.obj("sale" -> true)
-			)
-		)
+				Json.obj("sale" -> true)))
 		dsl shouldBe expected
 	}
 	// End of logical operators
@@ -272,10 +259,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 			"array" -> Json.obj(
 				"$elemMatch" -> Json.obj(
 					"value1" -> 1,
-					"value2" -> Json.obj("$gt" -> 1)
-				)
-			)
-		)
+					"value2" -> Json.obj("$gt" -> 1))))
 		dsl shouldBe expected
 	}
 
@@ -315,8 +299,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 
 		val expected = Json.obj(
 			"$setOnInsert" -> Json.obj("defaultQty" -> 500, "inStock" -> true),
-			"$set" -> Json.obj("item" -> "apple")
-		)
+			"$set" -> Json.obj("item" -> "apple"))
 
 		dsl shouldBe expected
 	}
@@ -329,9 +312,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 				Json.obj(
 					"name" -> "foo",
 					"surname" -> "bar",
-					"age" -> 32
-				)
-		)
+					"age" -> 32))
 
 		dsl shouldBe expected
 	}
@@ -344,9 +325,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 				Json.obj(
 					"name" -> "",
 					"surname" -> "",
-					"age" -> ""
-				)
-		)
+					"age" -> ""))
 
 		dsl shouldBe expected
 	}
@@ -369,10 +348,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 			"$currentDate" -> Json.obj(
 				"lastModified" -> true,
 				"lastModifiedTS" -> Json.obj(
-					"$type" -> "timestamp"
-				)
-			)
-		)
+					"$type" -> "timestamp")))
 		dsl shouldBe expected
 	}
 
@@ -425,10 +401,7 @@ class JsonDslSpec extends FlatSpec with Matchers {
 		val expected = Json.obj(
 			"$push" -> Json.obj(
 				"scores" -> Json.obj(
-					"$each" -> Json.arr(89, 90, 91, 92)
-				)
-			)
-		)
+					"$each" -> Json.arr(89, 90, 91, 92))))
 		dsl shouldBe expected
 	}
 	// End ofTop Level Array Update Operators

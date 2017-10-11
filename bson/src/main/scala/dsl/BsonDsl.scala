@@ -155,10 +155,7 @@ trait BsonDsl {
 		BSONDocument(
 			"$push" -> BSONDocument(
 				field -> BSONDocument(
-					"$each" -> values
-				)
-			)
-		)
+					"$each" -> values)))
 	}
 
 	def $pull(item: Producer[BSONElement]): BSONDocument = {
@@ -203,8 +200,8 @@ trait BsonDsl {
 	 *
 	 */
 	case class CompositeExpression(field: String, value: BSONDocument)
-			extends Expression[BSONDocument]
-			with ComparisonOperators {
+		extends Expression[BSONDocument]
+		with ComparisonOperators {
 		override def append(value: BSONDocument): BSONDocument = {
 			this.value ++ value
 		}

@@ -29,8 +29,7 @@ class BsonDaoBuilder[Model, ID](db: => Future[DefaultDB]) {
 		idWriter: BSONWriter[ID, _ <: BSONValue],
 		idReader: BSONReader[_ <: BSONValue, ID],
 		lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
-		ec: ExecutionContext
-	): BsonDao[Model, ID] = {
+		ec: ExecutionContext): BsonDao[Model, ID] = {
 		BsonDao(db, collectionName)
 	}
 }

@@ -26,8 +26,7 @@ class JsonDaoBuilder[Model: OFormat, ID: Writes](db: => Future[DefaultDB]) {
 	def apply(collectionName: String)(
 		implicit
 		lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
-		ec: ExecutionContext
-	): JsonDao[Model, ID] = {
+		ec: ExecutionContext): JsonDao[Model, ID] = {
 		JsonDao(db, collectionName)
 	}
 }

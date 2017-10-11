@@ -70,19 +70,16 @@ abstract class FileDao[Id <% BSONValue: IdProducer, Structure](db: => DB with DB
 	def save(
 		enumerator: Enumerator[Array[Byte]],
 		file: FileToSave[BSONSerializationPack.type, BSONValue],
-		chunkSize: Int = 262144
-	)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
+		chunkSize: Int = 262144)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
 		gfs.save(enumerator, file, chunkSize)
 
 	/** Saves the content provided by the given enumerator with the given metadata. */
 	def save(
 		enumerator: Enumerator[Array[Byte]],
 		filename: Option[String],
-		contentType: String
-	)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
+		contentType: String)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
 		gfs.save(enumerator, DefaultFileToSave(
-			filename = filename, contentType = Some(contentType)
-		))
+			filename = filename, contentType = Some(contentType)))
 
 }
 

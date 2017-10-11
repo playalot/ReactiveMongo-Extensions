@@ -27,14 +27,13 @@ import reactivemongo.bson._
  *
  */
 case class Term[T](`_term$name`: String)
-		extends Dynamic {
+	extends Dynamic {
 	/** Logical equality.
 	 */
 	def ===[U <: T: ValueBuilder](rhs: U): Expression =
 		Expression(
 			`_term$name`,
-			`_term$name` -> implicitly[ValueBuilder[U]].bson(rhs)
-		);
+			`_term$name` -> implicitly[ValueBuilder[U]].bson(rhs));
 
 	/** Logical equality.
 	 */
@@ -46,8 +45,7 @@ case class Term[T](`_term$name`: String)
 	def <>[U <: T: ValueBuilder](rhs: U): Expression =
 		Expression(
 			`_term$name`,
-			"$ne" -> implicitly[ValueBuilder[U]].bson(rhs)
-		);
+			"$ne" -> implicitly[ValueBuilder[U]].bson(rhs));
 
 	/** Logical inequality: '''$ne'''.
 	 */
@@ -64,32 +62,28 @@ case class Term[T](`_term$name`: String)
 	def <[U <: T: ValueBuilder](rhs: U): Expression =
 		Expression(
 			`_term$name`,
-			"$lt" -> implicitly[ValueBuilder[U]].bson(rhs)
-		);
+			"$lt" -> implicitly[ValueBuilder[U]].bson(rhs));
 
 	/** Less-than or equal comparison: '''$lte'''.
 	 */
 	def <=[U <: T: ValueBuilder](rhs: U): Expression =
 		Expression(
 			`_term$name`,
-			"$lte" -> implicitly[ValueBuilder[U]].bson(rhs)
-		);
+			"$lte" -> implicitly[ValueBuilder[U]].bson(rhs));
 
 	/** Greater-than comparison: '''$gt'''.
 	 */
 	def >[U <: T: ValueBuilder](rhs: U): Expression =
 		Expression(
 			`_term$name`,
-			"$gt" -> implicitly[ValueBuilder[U]].bson(rhs)
-		);
+			"$gt" -> implicitly[ValueBuilder[U]].bson(rhs));
 
 	/** Greater-than or equal comparison: '''$gte'''.
 	 */
 	def >=[U <: T: ValueBuilder](rhs: U): Expression =
 		Expression(
 			`_term$name`,
-			"$gte" -> implicitly[ValueBuilder[U]].bson(rhs)
-		);
+			"$gte" -> implicitly[ValueBuilder[U]].bson(rhs));
 
 	/** Field existence: '''$exists'''.
 	 */
@@ -106,8 +100,7 @@ case class Term[T](`_term$name`: String)
 	def in[U <: T: ValueBuilder](head: U, tail: U*)(implicit B: ValueBuilder[U]): Expression =
 		Expression(
 			`_term$name`,
-			"$in" -> BSONArray(Seq(B.bson(head)) ++ tail.map(B.bson))
-		);
+			"$in" -> BSONArray(Seq(B.bson(head)) ++ tail.map(B.bson)));
 
 	def selectDynamic[U](field: String): Term[U] =
 		Term[U](`_term$name` + "." + field);
@@ -119,27 +112,25 @@ object Term {
 	 *  `Seq` [[reactivemongo.extensions.dsl.criteria.Term]]s only.
 	 */
 	implicit class CollectionTermOps[T](val term: Term[Seq[T]])
-			extends AnyVal {
+		extends AnyVal {
 		def all(values: Traversable[T])(implicit B: ValueBuilder[T]): Expression =
 			Expression(
 				term.`_term$name`,
-				"$all" -> BSONArray(values map (B.bson))
-			);
+				"$all" -> BSONArray(values map (B.bson)));
 	}
 
 	/** The '''StringTermOps''' `implicit` enriches
 	 *  [[reactivemongo.extensions.dsl.criteria.Term]]s for `String`-only operations.
 	 */
 	implicit class StringTermOps[T >: String](val term: Term[T])
-			extends AnyVal {
+		extends AnyVal {
 		def =~(re: String): Expression =
 			Expression(term.`_term$name`, "$regex" -> BSONRegex(re, ""));
 
 		def !~(re: String): Expression =
 			Expression(
 				term.`_term$name`,
-				"$not" -> BSONDocument("$regex" -> BSONRegex(re, ""))
-			);
+				"$not" -> BSONDocument("$regex" -> BSONRegex(re, "")));
 	}
 }
 

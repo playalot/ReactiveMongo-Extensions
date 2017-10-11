@@ -26,8 +26,7 @@ case class Person(
 	age: Int,
 	salary: Double,
 	time: Long,
-	country: String
-)
+	country: String)
 
 object Person {
 	import reactivemongo.extensions.dao.Handlers._ // extensions BSON handler

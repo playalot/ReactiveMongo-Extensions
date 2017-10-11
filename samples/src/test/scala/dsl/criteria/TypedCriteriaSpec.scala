@@ -64,9 +64,7 @@ class TypedCriteriaSpec
 			(criteria[Person].firstName =~ "sample regex") shouldBe (
 				Expression(
 					Some("firstName"),
-					("$regex", BSONRegex("sample regex", ""))
-				)
-			);
+					("$regex", BSONRegex("sample regex", ""))));
 		}
 
 	it should "support trait-based expressions" in
@@ -80,16 +78,10 @@ class TypedCriteriaSpec
 						"$or" ->
 							BSONArray(
 								BSONDocument(
-									"employees" -> BSONInteger(42)
-								),
+									"employees" -> BSONInteger(42)),
 								BSONDocument(
 									"employees" ->
-										BSONDocument("$lt" -> 10)
-								)
-							)
-					)
-				)
-			);
+										BSONDocument("$lt" -> 10))))));
 		}
 }
 

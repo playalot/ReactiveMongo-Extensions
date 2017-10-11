@@ -132,8 +132,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 		update: Structure,
 		sort: Structure,
 		fetchNewObject: Boolean,
-		upsert: Boolean
-	)(implicit ec: ExecutionContext): Future[Option[Model]]
+		upsert: Boolean)(implicit ec: ExecutionContext): Future[Option[Model]]
 
 	/** Removes and returns a single model.
 	 *
@@ -196,8 +195,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	def remove(
 		selector: Structure,
 		writeConcern: GetLastError,
-		firstMatchOnly: Boolean
-	)(implicit ec: ExecutionContext): Future[WriteResult]
+		firstMatchOnly: Boolean)(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Removes all documents in this collection. */
 	def removeAll(writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]
@@ -227,8 +225,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 		update: U,
 		writeConcern: GetLastError,
 		upsert: Boolean,
-		multi: Boolean
-	)(implicit ec: ExecutionContext): Future[WriteResult]
+		multi: Boolean)(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Updates the document with the given `id`.
 	 *

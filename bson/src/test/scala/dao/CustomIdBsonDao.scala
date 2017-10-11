@@ -24,6 +24,5 @@ import reactivemongo.extensions.util.Misc.UUID
 class CustomIdBsonDao extends {
 	override val autoIndexes = Seq(
 		Index(Seq("name" -> IndexType.Ascending), unique = true, background = true),
-		Index(Seq("age" -> IndexType.Ascending), background = true)
-	)
+		Index(Seq("age" -> IndexType.Ascending), background = true))
 } with BsonDao[CustomIdModel, String](MongoContext.db, "customId-" + UUID())

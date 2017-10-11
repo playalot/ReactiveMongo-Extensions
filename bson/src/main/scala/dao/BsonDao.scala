@@ -76,13 +76,13 @@ import Handlers._
  *  @tparam ID Type of the ID field of the model.
  */
 abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: String)(implicit
-	modelReader: BSONDocumentReader[Model],
-	modelWriter: BSONDocumentWriter[Model],
-	idWriter: BSONWriter[ID, _ <: BSONValue],
-	idReader: BSONReader[_ <: BSONValue, ID],
-	lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
-	ec: ExecutionContext)
-		extends Dao[BSONCollection, BSONDocument, Model, ID, BSONDocumentWriter](db, collectionName) {
+		modelReader: BSONDocumentReader[Model],
+		modelWriter: BSONDocumentWriter[Model],
+		idWriter: BSONWriter[ID, _ <: BSONValue],
+		idReader: BSONReader[_ <: BSONValue, ID],
+		lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
+		ec: ExecutionContext)
+	extends Dao[BSONCollection, BSONDocument, Model, ID, BSONDocumentWriter](db, collectionName) {
 
 	def ensureIndexes()(implicit ec: ExecutionContext): Future[Traversable[Boolean]] = Future sequence {
 		autoIndexes map { index =>
@@ -108,8 +108,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		selector: BSONDocument = BSONDocument.empty,
 		sort: BSONDocument = BSONDocument("_id" -> 1),
 		page: Int,
-		pageSize: Int
-	)(implicit ec: ExecutionContext): Future[List[Model]] = {
+		pageSize: Int)(implicit ec: ExecutionContext): Future[List[Model]] = {
 		val from = (page - 1) * pageSize
 		collection.flatMap(_
 			.find(selector)
@@ -121,32 +120,26 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def findAll(
 		selector: BSONDocument = BSONDocument.empty,
-		sort: BSONDocument = BSONDocument("_id" -> 1)
-	)(implicit ec: ExecutionContext): Future[List[Model]] =
+		sort: BSONDocument = BSONDocument("_id" -> 1))(implicit ec: ExecutionContext): Future[List[Model]] =
 		collection.flatMap(_.find(selector).sort(sort).cursor[Model]().collect[List]())
 
 	@deprecated(
 		since = "0.11.1",
-		message = "Directly use [[findAndUpdate]] collection operation"
-	)
+		message = "Directly use [[findAndUpdate]] collection operation")
 	def findAndUpdate(
 		query: BSONDocument,
 		update: BSONDocument,
 		sort: BSONDocument = BSONDocument.empty,
 		fetchNewObject: Boolean = false,
-		upsert: Boolean = false
-	)(implicit ec: ExecutionContext): Future[Option[Model]] = collection.flatMap(_.findAndUpdate(
-		query, update, fetchNewObject, upsert
-	).map(_.result[Model]))
+		upsert: Boolean = false)(implicit ec: ExecutionContext): Future[Option[Model]] = collection.flatMap(_.findAndUpdate(
+		query, update, fetchNewObject, upsert).map(_.result[Model]))
 
 	@deprecated(
 		since = "0.11.1",
-		message = "Directly use [[findAndRemove]] collection operation"
-	)
+		message = "Directly use [[findAndRemove]] collection operation")
 	def findAndRemove(query: BSONDocument, sort: BSONDocument = BSONDocument.empty)(implicit ec: ExecutionContext): Future[Option[Model]] =
 		collection.flatMap(_.findAndRemove(
-			query, if (sort == BSONDocument.empty) None else Some(sort)
-		).
+			query, if (sort == BSONDocument.empty) None else Some(sort)).
 			map(_.result[Model]))
 
 	def findRandom(selector: BSONDocument = BSONDocument.empty)(implicit ec: ExecutionContext): Future[Option[Model]] = for {
@@ -171,15 +164,13 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 	def bulkInsert(
 		documents: TraversableOnce[Model],
 		bulkSize: Int,
-		bulkByteSize: Int
-	)(implicit ec: ExecutionContext): Future[Int] = {
+		bulkByteSize: Int)(implicit ec: ExecutionContext): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
 		val writer = implicitly[BSONDocumentWriter[Model]]
 
 		collection.flatMap(_.bulkInsert(
 			mappedDocuments.map(writer.write(_)).toStream,
-			true, defaultWriteConcern, bulkSize, bulkByteSize
-		) map { result =>
+			true, defaultWriteConcern, bulkSize, bulkByteSize) map { result =>
 				mappedDocuments.map(lifeCycle.postPersist)
 				result.n
 			})
@@ -190,14 +181,12 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		update: U,
 		writeConcern: GetLastError = defaultWriteConcern,
 		upsert: Boolean = false,
-		multi: Boolean = false
-	)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update(selector, update, writeConcern, upsert, multi))
+		multi: Boolean = false)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update(selector, update, writeConcern, upsert, multi))
 
 	def updateById[U: BSONDocumentWriter](
 		id: ID,
 		update: U,
-		writeConcern: GetLastError = defaultWriteConcern
-	)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update($id(id), update, writeConcern))
+		writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update($id(id), update, writeConcern))
 
 	def save(model: Model, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val writer = implicitly[BSONDocumentWriter[Model]]
@@ -233,8 +222,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 	def remove(
 		query: BSONDocument,
 		writeConcern: GetLastError = defaultWriteConcern,
-		firstMatchOnly: Boolean = false
-	)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.remove(query, writeConcern, firstMatchOnly))
+		firstMatchOnly: Boolean = false)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.remove(query, writeConcern, firstMatchOnly))
 
 	def removeAll(writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		collection.flatMap(_.remove(selector = BSONDocument.empty, writeConcern = writeConcern, firstMatchOnly = false))
@@ -242,8 +230,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def foreach(
 		selector: BSONDocument = BSONDocument.empty,
-		sort: BSONDocument = BSONDocument("_id" -> 1)
-	)(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
+		sort: BSONDocument = BSONDocument("_id" -> 1))(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
 		collection.flatMap(_.find(selector).sort(sort).cursor[Model]()
 			.enumerate()
 			.apply(Iteratee.foreach(f))
@@ -253,8 +240,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 	def fold[A](
 		selector: BSONDocument = BSONDocument.empty,
 		sort: BSONDocument = BSONDocument("_id" -> 1),
-		state: A
-	)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
+		state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
 		collection.flatMap(_.find(selector).sort(sort).cursor[Model]()
 			.enumerate()
 			.apply(Iteratee.fold(state)(f))
@@ -272,8 +258,7 @@ object BsonDao {
 		idWriter: BSONWriter[ID, _ <: BSONValue],
 		idReader: BSONReader[_ <: BSONValue, ID],
 		lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
-		ec: ExecutionContext
-	): BsonDao[Model, ID] = {
+		ec: ExecutionContext): BsonDao[Model, ID] = {
 		new BsonDao[Model, ID](db, collectionName) {}
 	}
 }

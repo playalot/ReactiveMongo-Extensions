@@ -53,17 +53,14 @@ object Typed {
 					val accessor = parentType.tpe.member(TermName(name)) orElse {
 						c.abort(
 							c.enclosingPosition,
-							s"$name is not a member of ${parentType.tpe}"
-						)
+							s"$name is not a member of ${parentType.tpe}")
 					}
 
 					Apply(
 						Select(
 							New(TypeTree(typeOf[Term[Any]])),
-							termNames.CONSTRUCTOR
-						),
-						List(st)
-					);
+							termNames.CONSTRUCTOR),
+						List(st));
 
 				case other =>
 					c.abort(c.enclosingPosition, s"only property access is supported: $other");

@@ -24,8 +24,7 @@ case class Event(
 	_id: String,
 	title: String,
 	organizer: String,
-	location: Location
-)
+	location: Location)
 
 case class Location(city: String, place: String)
 

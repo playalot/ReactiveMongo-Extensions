@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * Created on: Jun 2, 2013
  */
 package reactivemongo.extensions.dsl.criteria
@@ -41,18 +41,12 @@ class UntypedCriteriaSpec
 			BSONDocument.pretty(criteria.myField === "a value") shouldBe (
 				BSONDocument.pretty(
 					BSONDocument(
-						"myField" -> BSONString("a value")
-					)
-				)
-			);
+						"myField" -> BSONString("a value"))));
 
 			BSONDocument.pretty(criteria.myField @== "a value") shouldBe (
 				BSONDocument.pretty(
 					BSONDocument(
-						"myField" -> BSONString("a value")
-					)
-				)
-			);
+						"myField" -> BSONString("a value"))));
 		}
 
 	it should "support inequality comparisons" in
@@ -61,28 +55,19 @@ class UntypedCriteriaSpec
 				BSONDocument.pretty(
 					BSONDocument(
 						"myField" ->
-							BSONDocument("$ne" -> BSONString("a value"))
-					)
-				)
-			);
+							BSONDocument("$ne" -> BSONString("a value")))));
 
 			BSONDocument.pretty(criteria.myField =/= "a value") shouldBe (
 				BSONDocument.pretty(
 					BSONDocument(
 						"myField" ->
-							BSONDocument("$ne" -> BSONString("a value"))
-					)
-				)
-			);
+							BSONDocument("$ne" -> BSONString("a value")))));
 
 			BSONDocument.pretty(criteria.myField <> "a value") shouldBe (
 				BSONDocument.pretty(
 					BSONDocument(
 						"myField" ->
-							BSONDocument("$ne" -> BSONString("a value"))
-					)
-				)
-			);
+							BSONDocument("$ne" -> BSONString("a value")))));
 		}
 
 	it should "support nested object selectors" in
@@ -93,10 +78,7 @@ class UntypedCriteriaSpec
 				BSONDocument.pretty(
 					BSONDocument(
 						"outer.inner" ->
-							BSONDocument("$ne" -> BSONInteger(99))
-					)
-				)
-			);
+							BSONDocument("$ne" -> BSONInteger(99)))));
 		}
 
 	it should "support String operations" in
@@ -108,11 +90,7 @@ class UntypedCriteriaSpec
 					BSONDocument(
 						"str" ->
 							BSONDocument(
-								"$regex" -> BSONRegex("^test|re", "")
-							)
-					)
-				)
-			);
+								"$regex" -> BSONRegex("^test|re", "")))));
 		}
 
 	it should "support conjunctions" in
@@ -125,15 +103,9 @@ class UntypedCriteriaSpec
 						"$and" ->
 							BSONArray(
 								BSONDocument(
-									"first" -> BSONDocument("$lt" -> BSONInteger(10))
-								),
+									"first" -> BSONDocument("$lt" -> BSONInteger(10))),
 								BSONDocument(
-									"second" -> BSONDocument("$gte" -> BSONDouble(20.0))
-								)
-							)
-					)
-				)
-			);
+									"second" -> BSONDocument("$gte" -> BSONDouble(20.0)))))));
 		}
 
 	it should "support disjunctions" in
@@ -146,15 +118,9 @@ class UntypedCriteriaSpec
 						"$or" ->
 							BSONArray(
 								BSONDocument(
-									"first" -> BSONDocument("$lt" -> BSONInteger(10))
-								),
+									"first" -> BSONDocument("$lt" -> BSONInteger(10))),
 								BSONDocument(
-									"second" -> BSONDocument("$gte" -> BSONDouble(20.0))
-								)
-							)
-					)
-				)
-			);
+									"second" -> BSONDocument("$gte" -> BSONDouble(20.0)))))));
 		}
 
 	it should "combine adjacent conjunctions" in
@@ -167,18 +133,11 @@ class UntypedCriteriaSpec
 						"$and" ->
 							BSONArray(
 								BSONDocument(
-									"first" -> BSONDocument("$lt" -> BSONInteger(10))
-								),
+									"first" -> BSONDocument("$lt" -> BSONInteger(10))),
 								BSONDocument(
-									"second" -> BSONDocument("$gte" -> BSONDouble(20.0))
-								),
+									"second" -> BSONDocument("$gte" -> BSONDouble(20.0))),
 								BSONDocument(
-									"third" -> BSONDocument("$lt" -> BSONDouble(0.0))
-								)
-							)
-					)
-				)
-			);
+									"third" -> BSONDocument("$lt" -> BSONDouble(0.0)))))));
 		}
 
 	it should "combine adjacent disjunctions" in
@@ -191,18 +150,11 @@ class UntypedCriteriaSpec
 						"$or" ->
 							BSONArray(
 								BSONDocument(
-									"first" -> BSONDocument("$lt" -> BSONInteger(10))
-								),
+									"first" -> BSONDocument("$lt" -> BSONInteger(10))),
 								BSONDocument(
-									"second" -> BSONDocument("$gte" -> BSONDouble(20.0))
-								),
+									"second" -> BSONDocument("$gte" -> BSONDouble(20.0))),
 								BSONDocument(
-									"third" -> BSONDocument("$lt" -> BSONDouble(0.0))
-								)
-							)
-					)
-				)
-			);
+									"third" -> BSONDocument("$lt" -> BSONDouble(0.0)))))));
 		}
 
 	it should "support compound filtering" in
@@ -215,30 +167,19 @@ class UntypedCriteriaSpec
 						"$and" ->
 							BSONArray(
 								BSONDocument(
-									"first" -> BSONDocument("$lt" -> BSONInteger(10))
-								),
+									"first" -> BSONDocument("$lt" -> BSONInteger(10))),
 								BSONDocument(
 									"$or" ->
 										BSONArray(
 											BSONDocument(
-												"second" -> BSONDocument("$gte" -> BSONDouble(20.0))
-											),
+												"second" -> BSONDocument("$gte" -> BSONDouble(20.0))),
 											BSONDocument(
 												"second" ->
 													BSONDocument(
 														"$in" ->
 															BSONArray(
 																BSONDouble(0.0),
-																BSONDouble(1.0)
-															)
-													)
-											)
-										)
-								)
-							)
-					)
-				)
-			);
+																BSONDouble(1.0))))))))));
 		}
 
 	it should "support alternating logical operators" in
@@ -254,28 +195,16 @@ class UntypedCriteriaSpec
 									"$and" ->
 										BSONArray(
 											BSONDocument(
-												"first" -> BSONDocument("$lt" -> BSONInteger(10))
-											),
+												"first" -> BSONDocument("$lt" -> BSONInteger(10))),
 											BSONDocument(
-												"second" -> BSONDocument("$gte" -> BSONDouble(20.0))
-											)
-										)
-								),
+												"second" -> BSONDocument("$gte" -> BSONDouble(20.0))))),
 								BSONDocument(
 									"$and" ->
 										BSONArray(
 											BSONDocument(
-												"third" -> BSONDocument("$lt" -> BSONDouble(0.0))
-											),
+												"third" -> BSONDocument("$lt" -> BSONDouble(0.0))),
 											BSONDocument(
-												"fourth" -> BSONDocument("$regex" -> BSONRegex("some regex", ""))
-											)
-										)
-								)
-							)
-					)
-				)
-			);
+												"fourth" -> BSONDocument("$regex" -> BSONRegex("some regex", "")))))))));
 		}
 
 	it should "support logical negation" in
@@ -284,10 +213,7 @@ class UntypedCriteriaSpec
 				BSONDocument.pretty(
 					BSONDocument(
 						"a" ->
-							BSONDocument("$ne" -> BSONInteger(42))
-					)
-				)
-			);
+							BSONDocument("$ne" -> BSONInteger(42)))));
 
 			BSONDocument.pretty(!(criteria.a =~ "regex(p)?")) shouldBe (
 				BSONDocument.pretty(
@@ -295,11 +221,7 @@ class UntypedCriteriaSpec
 						"$not" ->
 							BSONDocument(
 								"a" ->
-									BSONDocument("$regex" -> BSONRegex("regex(p)?", ""))
-							)
-					)
-				)
-			);
+									BSONDocument("$regex" -> BSONRegex("regex(p)?", ""))))));
 
 			BSONDocument.pretty(!(criteria.xyz === 1 || criteria.xyz === 2)) shouldBe (
 				BSONDocument.pretty(
@@ -307,45 +229,32 @@ class UntypedCriteriaSpec
 						"$nor" ->
 							BSONArray(
 								BSONDocument("xyz" -> BSONInteger(1)),
-								BSONDocument("xyz" -> BSONInteger(2))
-							)
-					)
-				)
-			);
+								BSONDocument("xyz" -> BSONInteger(2))))));
 		}
 
 	it should "have an 'empty' resulting in no criteria" in
 		{
 			BSONDocument.pretty(Expression.empty) shouldBe (
-				BSONDocument.pretty(BSONDocument())
-			);
+				BSONDocument.pretty(BSONDocument()));
 		}
 
 	it should "ignore 'empty' in logical operators" in
 		{
 			BSONDocument.pretty(criteria.a === 1 && Expression.empty) shouldBe (
 				BSONDocument.pretty(
-					BSONDocument("a" -> BSONInteger(1))
-				)
-			);
+					BSONDocument("a" -> BSONInteger(1))));
 
 			BSONDocument.pretty(Expression.empty && criteria.a === 2.0) shouldBe (
 				BSONDocument.pretty(
-					BSONDocument("a" -> BSONDouble(2.0))
-				)
-			);
+					BSONDocument("a" -> BSONDouble(2.0))));
 
 			BSONDocument.pretty(Expression.empty || criteria.a === "three") shouldBe (
 				BSONDocument.pretty(
-					BSONDocument("a" -> BSONString("three"))
-				)
-			);
+					BSONDocument("a" -> BSONString("three"))));
 
 			BSONDocument.pretty(criteria.a === 4L || Expression.empty) shouldBe (
 				BSONDocument.pretty(
-					BSONDocument("a" -> BSONLong(4L))
-				)
-			);
+					BSONDocument("a" -> BSONLong(4L))));
 		}
 }
 

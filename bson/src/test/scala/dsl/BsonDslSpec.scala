@@ -44,14 +44,11 @@ object BsonDslSpec extends FlatSpec with Matchers {
 			"birthday" -> dateTime,
 			"prefs" -> $doc(
 				"pref1" -> "value1",
-				"pref2" -> 1341453453L
-			),
+				"pref2" -> 1341453453L),
 			"sizes" -> $arr("M", "L"),
 			"notices" -> $arr(
 				$doc("key1" -> "value1"),
-				$doc("key2" -> "value2")
-			)
-		)
+				$doc("key2" -> "value2")))
 
 		val expected = BSONDocument(
 			"name" -> "haydar",
@@ -61,14 +58,11 @@ object BsonDslSpec extends FlatSpec with Matchers {
 			"birthday" -> BSONDateTime(dateTime.getMillis),
 			"prefs" -> BSONDocument(
 				"pref1" -> "value1",
-				"pref2" -> 1341453453L
-			),
+				"pref2" -> 1341453453L),
 			"sizes" -> BSONArray("M", "L"),
 			"notices" -> BSONArray(
 				BSONDocument("key1" -> "value1"),
-				BSONDocument("key2" -> "value2")
-			)
-		)
+				BSONDocument("key2" -> "value2")))
 
 		document shouldBe expected
 	}
@@ -137,9 +131,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 		val expected = BSONDocument(
 			"$or" -> BSONArray(
 				BSONDocument("qty" -> BSONDocument("$lt" -> 20, "$gte" -> 10)),
-				BSONDocument("sale" -> true)
-			)
-		)
+				BSONDocument("sale" -> true)))
 		dsl shouldBe expected
 	}
 
@@ -150,9 +142,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 			"$and" -> BSONArray(
 				BSONDocument("name" -> "foo"),
 				BSONDocument("surname" -> "bar"),
-				BSONDocument("age" -> 32)
-			)
-		)
+				BSONDocument("age" -> 32)))
 		dsl shouldBe expected
 	}
 
@@ -170,9 +160,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 			"$nor" -> BSONArray(
 				BSONDocument("price" -> 1.99),
 				BSONDocument("qty" -> BSONDocument("$lt" -> 20)),
-				BSONDocument("sale" -> true)
-			)
-		)
+				BSONDocument("sale" -> true)))
 		dsl shouldBe expected
 	}
 	// End of logical operators
@@ -249,10 +237,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 			"array" -> BSONDocument(
 				"$elemMatch" -> BSONDocument(
 					"value1" -> 1,
-					"value2" -> BSONDocument("$gt" -> 1)
-				)
-			)
-		)
+					"value2" -> BSONDocument("$gt" -> 1))))
 		dsl shouldBe expected
 	}
 
@@ -292,8 +277,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 
 		val expected = BSONDocument(
 			"$setOnInsert" -> BSONDocument("defaultQty" -> 500, "inStock" -> true),
-			"$set" -> BSONDocument("item" -> "apple")
-		)
+			"$set" -> BSONDocument("item" -> "apple"))
 
 		dsl shouldBe expected
 	}
@@ -306,9 +290,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 				BSONDocument(
 					"name" -> "foo",
 					"surname" -> "bar",
-					"age" -> 32
-				)
-		)
+					"age" -> 32))
 
 		dsl shouldBe expected
 	}
@@ -321,9 +303,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 				BSONDocument(
 					"name" -> "",
 					"surname" -> "",
-					"age" -> ""
-				)
-		)
+					"age" -> ""))
 
 		dsl shouldBe expected
 	}
@@ -349,10 +329,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 			"$currentDate" -> BSONDocument(
 				"lastModified" -> true,
 				"lastModifiedTS" -> BSONDocument(
-					"$type" -> "timestamp"
-				)
-			)
-		)
+					"$type" -> "timestamp")))
 		dsl shouldBe expected
 	}
 
@@ -393,10 +370,7 @@ object BsonDslSpec extends FlatSpec with Matchers {
 		val expected = BSONDocument(
 			"$push" -> BSONDocument(
 				"scores" -> BSONDocument(
-					"$each" -> BSONArray(89, 90, 91, 92)
-				)
-			)
-		)
+					"$each" -> BSONArray(89, 90, 91, 92))))
 
 		Logger.debug(dsl)
 

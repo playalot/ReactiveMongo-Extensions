@@ -7,7 +7,7 @@ SbtScalariform.scalariformSettings
 
 lazy val commonSettings = Seq(
   organization := "cn.playalot",
-  version := "0.12.6",
+  version := "0.12.7",
   scalaVersion  := "2.12.3",
   crossScalaVersions := Seq("2.11.11", "2.12.3"),
   crossVersion := CrossVersion.binary,
@@ -30,9 +30,9 @@ lazy val commonSettings = Seq(
   shellPrompt in ThisBuild := Common.prompt,
   ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(AlignParameters, true)
-  .setPreference(DoubleIndentClassDeclaration, true)
+  .setPreference(DoubleIndentConstructorArguments, true)
   .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-  .setPreference(IndentWithTabs, true))
+  .setPreference(IndentWithTabs, true)) ++ scalariformSettings
 
 lazy val publishSettings = Seq(
   organization := "cn.playalot",

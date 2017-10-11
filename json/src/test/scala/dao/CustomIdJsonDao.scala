@@ -27,6 +27,5 @@ class CustomIdJsonDao
 
 	override def autoIndexes = Seq(
 		Index(Seq("name" -> IndexType.Ascending), unique = true, background = true),
-		Index(Seq("age" -> IndexType.Ascending), background = true)
-	)
+		Index(Seq("age" -> IndexType.Ascending), background = true))
 }

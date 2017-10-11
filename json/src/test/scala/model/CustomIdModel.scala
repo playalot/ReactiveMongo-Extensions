@@ -24,8 +24,7 @@ case class CustomIdModel(
 	_id: String = UUID(),
 	name: String,
 	surname: String,
-	age: Int
-)
+	age: Int)
 
 object CustomIdModel {
 	implicit val customIdModelHandler = Macros.handler[CustomIdModel]

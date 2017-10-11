@@ -44,10 +44,7 @@ class UntypedWhereSpec
 			BSONDocument.pretty(q) shouldBe (
 				BSONDocument.pretty(
 					BSONDocument(
-						"a" -> BSONInteger(1)
-					)
-				)
-			);
+						"a" -> BSONInteger(1))));
 		}
 
 	it should "support 2 placeholders" in
@@ -62,15 +59,9 @@ class UntypedWhereSpec
 						"$and" ->
 							BSONArray(
 								BSONDocument(
-									"a" -> BSONInteger(1)
-								),
+									"a" -> BSONInteger(1)),
 								BSONDocument(
-									"b" -> BSONInteger(2)
-								)
-							)
-					)
-				)
-			);
+									"b" -> BSONInteger(2))))));
 		}
 
 	it should "support 3 placeholders" in
@@ -85,18 +76,11 @@ class UntypedWhereSpec
 						"$and" ->
 							BSONArray(
 								BSONDocument(
-									"a" -> BSONInteger(1)
-								),
+									"a" -> BSONInteger(1)),
 								BSONDocument(
-									"b" -> BSONInteger(2)
-								),
+									"b" -> BSONInteger(2)),
 								BSONDocument(
-									"c" -> BSONInteger(3)
-								)
-							)
-					)
-				)
-			);
+									"c" -> BSONInteger(3))))));
 		}
 
 	/// The library supports from 1 to 22 placeholders for the where method.
@@ -131,9 +115,6 @@ class UntypedWhereSpec
 				BSONDocument.pretty(
 					BSONDocument(
 						"$and" ->
-							BSONArray(List.fill(22)(BSONDocument("p" -> BSONInteger(0))))
-					)
-				)
-			);
+							BSONArray(List.fill(22)(BSONDocument("p" -> BSONInteger(0)))))));
 		}
 }

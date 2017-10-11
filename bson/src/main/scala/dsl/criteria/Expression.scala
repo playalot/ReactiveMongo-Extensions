@@ -128,8 +128,7 @@ case class Expression(name: Option[String], element: BSONElement) {
 				case BSONElement(`op`, arr: BSONArray) =>
 					Expression(
 						None,
-						(op, arr ++ BSONArray(toBSONDocument(rhs)))
-					);
+						(op, arr ++ BSONArray(toBSONDocument(rhs))));
 
 				case BSONElement("", _) =>
 					rhs;

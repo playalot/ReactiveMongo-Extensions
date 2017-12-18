@@ -1,15 +1,12 @@
 import scalariform.formatter.preferences._
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
 name := "reactivemongo-extensions"
-
-SbtScalariform.scalariformSettings
 
 lazy val commonSettings = Seq(
   organization := "cn.playalot",
   version := "0.12.7",
-  scalaVersion  := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  scalaVersion  := "2.12.4",
+  crossScalaVersions := Seq("2.11.11", "2.12.4"),
   crossVersion := CrossVersion.binary,
   scalacOptions := Seq(
     "-unchecked",
@@ -28,11 +25,11 @@ lazy val commonSettings = Seq(
   testOptions in Test += Tests.Argument("-oDS"),
   parallelExecution in Test := true,
   shellPrompt in ThisBuild := Common.prompt,
-  ScalariformKeys.preferences := ScalariformKeys.preferences.value
+  scalariformPreferences := scalariformPreferences.value
   .setPreference(AlignParameters, true)
   .setPreference(DoubleIndentConstructorArguments, true)
   .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-  .setPreference(IndentWithTabs, true)) ++ scalariformSettings
+  .setPreference(IndentWithTabs, true))
 
 lazy val publishSettings = Seq(
   organization := "cn.playalot",
@@ -73,8 +70,7 @@ val travisSettings = Seq(
 
 lazy val settings = (
   commonSettings
-  ++ travisSettings
-  ++ scalariformSettings)
+  ++ travisSettings)
 
 lazy val root = project.in(file("."))
   .aggregate(bson, json, core, samples)

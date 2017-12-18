@@ -153,13 +153,6 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		})
 	}
 
-	// ReactiveMongo API changed and this metadata is no longer accessible (at least this way) - in the interest of getting somethign compilable, this is out for now
-
-	//	private val (maxBulkSize, maxBsonSize): (Int, Int) =
-	//		collection.db.connection.metadata.map {
-	//			metadata => metadata.maxBulkSize -> metadata.maxBsonSize
-	//		}.getOrElse[(Int, Int)](Int.MaxValue -> Int.MaxValue)
-
 	def bulkInsert(
 		documents: TraversableOnce[Model],
 		bulkSize: Int,
@@ -171,6 +164,8 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 			case Some(doc) => writer.writes(doc) #:: go(docs.tail)
 			case _ => Stream.Empty
 		}
+
+		collection.flatMap(_.insert[Model](true).many(mappedDocuments.toIterable))
 
 		collection.flatMap(_.bulkInsert(
 			go(mappedDocuments.toTraversable),

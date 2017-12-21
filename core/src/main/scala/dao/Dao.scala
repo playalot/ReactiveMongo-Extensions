@@ -89,7 +89,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	def defaultWriteConcern: GetLastError = GetLastError.Default
 
 	/** Drops this collection */
-	def drop()(implicit ec: ExecutionContext): Future[Unit]
+	def drop()(implicit ec: ExecutionContext): Future[Boolean]
 
 	/** Drops this collection and awaits until it has been dropped or a timeout has occured.
 	 *  @param timeout Maximum amount of time to await until this collection has been dropped.

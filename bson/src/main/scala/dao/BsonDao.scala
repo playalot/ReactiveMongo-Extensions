@@ -195,7 +195,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def count(selector: BSONDocument = BSONDocument.empty)(implicit ec: ExecutionContext): Future[Int] = collection.flatMap(_.count(Some(selector)))
 
-	def drop()(implicit ec: ExecutionContext): Future[Unit] = collection.flatMap(_.drop())
+	def drop()(implicit ec: ExecutionContext): Future[Boolean] = collection.flatMap(_.drop(failIfNotFound = true))
 
 	def dropSync(timeout: Duration = 10 seconds)(implicit ec: ExecutionContext): Unit = Await.result(drop(), timeout)
 

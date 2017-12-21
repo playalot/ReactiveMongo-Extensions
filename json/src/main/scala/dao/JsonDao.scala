@@ -146,7 +146,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		})
 	}
 
-	def bulkInsert(documents: Iterable[Model]): Future[Int] = {
+	def bulkInsert(documents: Iterable[Model])(implicit ec: scala.concurrent.ExecutionContext): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
 		collection.flatMap(_.insert[Model](ordered = true).many(mappedDocuments)).map { result =>
 			mappedDocuments.foreach(lifeCycle.postPersist)

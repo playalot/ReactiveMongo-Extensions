@@ -37,8 +37,8 @@ case class Person(val firstName: String, val lastName: String, age: Int)
  *
  */
 class TypedCriteriaSpec
-		extends FlatSpec
-		with Matchers {
+	extends FlatSpec
+	with Matchers {
 	/// Class Imports
 	import Typed._
 

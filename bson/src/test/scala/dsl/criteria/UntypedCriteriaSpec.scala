@@ -31,8 +31,8 @@ import reactivemongo.bson._
  *
  */
 class UntypedCriteriaSpec
-		extends FlatSpec
-		with Matchers {
+	extends FlatSpec
+	with Matchers {
 	/// Class Imports
 	import Untyped._
 

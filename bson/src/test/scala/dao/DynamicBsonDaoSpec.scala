@@ -27,11 +27,11 @@ import scala.concurrent.{ Future, Await }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class DynamicBsonDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	override implicit def patienceConfig = PatienceConfig(timeout = Span(20, Seconds), interval = Span(1, Seconds))
 

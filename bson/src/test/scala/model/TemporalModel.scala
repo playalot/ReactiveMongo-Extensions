@@ -23,11 +23,11 @@ import reactivemongo.extensions.util.Logger
 import org.joda.time.DateTime
 
 case class TemporalModel(
-	_id: BSONObjectID = BSONObjectID.generate,
-	name: String,
-	surname: String,
-	createdAt: DateTime = DateTime.now,
-	updatedAt: DateTime = DateTime.now)
+		_id: BSONObjectID = BSONObjectID.generate,
+		name: String,
+		surname: String,
+		createdAt: DateTime = DateTime.now,
+		updatedAt: DateTime = DateTime.now)
 
 object TemporalModel {
 	import reactivemongo.extensions.dao.Handlers._

@@ -30,8 +30,8 @@ import reactivemongo.bson._
  *
  */
 class UntypedWhereSpec
-		extends FlatSpec
-		with Matchers {
+	extends FlatSpec
+	with Matchers {
 	/// Class Imports
 	import Untyped._
 

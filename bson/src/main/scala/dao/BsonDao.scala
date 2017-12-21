@@ -156,24 +156,12 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		})
 	}
 
-	//	private val (maxBulkSize, maxBsonSize): (Int, Int) =
-	//		collection.db.connection.metadata.map {
-	//			metadata => metadata.maxBulkSize -> metadata.maxBsonSize
-	//		}.getOrElse[(Int, Int)](Int.MaxValue -> Int.MaxValue)
-
-	def bulkInsert(
-		documents: TraversableOnce[Model],
-		bulkSize: Int,
-		bulkByteSize: Int)(implicit ec: ExecutionContext): Future[Int] = {
+	def bulkInsert(documents: Iterable[Model])(implicit ec: ExecutionContext): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
-		val writer = implicitly[BSONDocumentWriter[Model]]
-
-		collection.flatMap(_.bulkInsert(
-			mappedDocuments.map(writer.write(_)).toStream,
-			true, defaultWriteConcern, bulkSize, bulkByteSize) map { result =>
-				mappedDocuments.map(lifeCycle.postPersist)
-				result.n
-			})
+		collection.flatMap(_.insert[Model](ordered = true).many(mappedDocuments)).map { result =>
+			mappedDocuments.map(lifeCycle.postPersist)
+			result.n
+		}
 	}
 
 	def update[U: BSONDocumentWriter](

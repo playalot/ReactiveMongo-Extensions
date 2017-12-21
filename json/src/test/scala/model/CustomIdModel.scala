@@ -21,10 +21,10 @@ import play.api.libs.json.Json
 import reactivemongo.extensions.util.Misc.UUID
 
 case class CustomIdModel(
-	_id: String = UUID(),
-	name: String,
-	surname: String,
-	age: Int)
+		_id: String = UUID(),
+		name: String,
+		surname: String,
+		age: Int)
 
 object CustomIdModel {
 	implicit val customIdModelHandler = Macros.handler[CustomIdModel]

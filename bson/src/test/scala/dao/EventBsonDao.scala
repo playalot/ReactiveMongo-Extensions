@@ -24,7 +24,7 @@ import reactivemongo.api.DefaultDB
 import reactivemongo.extensions.dsl.BsonDsl
 
 class EventBsonDao(_db: Future[DefaultDB])
-		extends BsonDao[Event, String](_db, "events") with BsonDsl {
+	extends BsonDao[Event, String](_db, "events") with BsonDsl {
 
 	def findByTitle(title: String): Future[Option[Event]] =
 		findOne("title" $eq title)

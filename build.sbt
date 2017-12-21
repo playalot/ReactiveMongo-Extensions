@@ -64,7 +64,7 @@ lazy val publishSettings = Seq(
     </developers>)
 
 val travisSettings = Seq(
-  Travis.travisSnapshotBranches := Seq("0.11.x"),
+  Travis.travisSnapshotBranches := Seq("0.12.x"),
   commands += Travis.travisCommand
 )
 

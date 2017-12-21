@@ -23,8 +23,8 @@ import reactivemongo.extensions.json.dsl.JsonDsl
 import reactivemongo.api.DefaultDB
 
 class EventJsonDao(_db: Future[DefaultDB])
-		extends JsonDao[Event, String](_db, "events")
-		with JsonDsl {
+	extends JsonDao[Event, String](_db, "events")
+	with JsonDsl {
 
 	def findByTitle(title: String): Future[Option[Event]] = {
 		findOne("title" $eq title)

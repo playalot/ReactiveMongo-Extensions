@@ -29,11 +29,11 @@ import reactivemongo.bson.BSONObjectID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class JsonFileDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	import reactivemongo.play.json._
 

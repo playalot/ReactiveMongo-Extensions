@@ -28,11 +28,11 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MapModelBsonDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	override implicit def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
 

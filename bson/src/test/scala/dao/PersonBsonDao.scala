@@ -26,7 +26,7 @@ import reactivemongo.extensions.dsl.BsonDsl
 import reactivemongo.extensions.dao.Handlers._
 
 class PersonBsonDao(_db: Future[DefaultDB])
-		extends BsonDao[Person, String](_db, "persons") with BsonDsl {
+	extends BsonDao[Person, String](_db, "persons") with BsonDsl {
 
 	def findByName(name: String): Future[Option[Person]] =
 		findOne("name" $eq name)

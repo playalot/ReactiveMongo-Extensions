@@ -37,11 +37,11 @@ import scala.concurrent.{ Future, Await }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class DynamicJsonDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	import play.modules.reactivemongo.json._
 

@@ -21,8 +21,8 @@ import reactivemongo.play.json.BSONFormats._
 import play.api.libs.json.Json
 
 case class MapModel(
-	_id: BSONObjectID = BSONObjectID.generate,
-	data: Map[String, Int])
+		_id: BSONObjectID = BSONObjectID.generate,
+		data: Map[String, Int])
 
 object MapModel {
 	implicit val customIdModelFormat = Json.format[MapModel]

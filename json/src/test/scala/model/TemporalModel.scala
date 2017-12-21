@@ -25,11 +25,11 @@ import org.joda.time.DateTime
 import reactivemongo.extensions.json.joda.JodaFormats._
 
 case class TemporalModel(
-	_id: BSONObjectID = BSONObjectID.generate,
-	name: String,
-	surname: String,
-	createdAt: DateTime = DateTime.now,
-	updatedAt: DateTime = DateTime.now)
+		_id: BSONObjectID = BSONObjectID.generate,
+		name: String,
+		surname: String,
+		createdAt: DateTime = DateTime.now,
+		updatedAt: DateTime = DateTime.now)
 
 object TemporalModel {
 	implicit val temporalModelFormat = Json.format[TemporalModel]

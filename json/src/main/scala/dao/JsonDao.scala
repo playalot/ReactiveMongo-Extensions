@@ -19,8 +19,7 @@ package reactivemongo.extensions.json.dao
 import scala.util.Random
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
-import reactivemongo.bson._
-import reactivemongo.api.{ DB, DefaultDB, QueryOpts }
+import reactivemongo.api.{ Cursor, DB, DefaultDB, QueryOpts }
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.commands.{ GetLastError, WriteResult }
 import play.modules.reactivemongo.json._
@@ -112,7 +111,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 			.sort(sort)
 			.options(QueryOpts(skipN = from, batchSizeN = pageSize))
 			.cursor[Model]()
-			.collect[List](pageSize))
+			.collect[List](pageSize, Cursor.FailOnError[List[Model]]()))
 	}
 
 	def findAll(
@@ -121,9 +120,6 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		collection.flatMap(_.find(selector).sort(sort).cursor[Model]().collect[List]())
 	}
 
-	@deprecated(
-		since = "0.11.1",
-		message = "Directly use [[findAndUpdate]] collection operation")
 	def findAndUpdate(
 		query: JsObject,
 		update: JsObject,
@@ -132,9 +128,6 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		upsert: Boolean = false)(implicit ec: ExecutionContext): Future[Option[Model]] = collection.flatMap(_.findAndUpdate(
 		query, update, fetchNewObject, upsert).map(_.result[Model]))
 
-	@deprecated(
-		since = "0.11.1",
-		message = "Directly use [[findAndRemove]] collection operation")
 	def findAndRemove(query: JsObject, sort: JsObject = Json.obj())(implicit ec: ExecutionContext): Future[Option[Model]] = collection.flatMap(_.findAndRemove(
 		query, if (sort == Json.obj()) None else Some(sort)).
 		map(_.result[Model]))
@@ -153,26 +146,12 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		})
 	}
 
-	def bulkInsert(
-		documents: TraversableOnce[Model],
-		bulkSize: Int,
-		bulkByteSize: Int)(implicit ec: ExecutionContext): Future[Int] = {
+	def bulkInsert(documents: Iterable[Model]): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
-		val writer = implicitly[OWrites[Model]]
-
-		def go(docs: Traversable[Model]): Stream[JsObject] = docs.headOption match {
-			case Some(doc) => writer.writes(doc) #:: go(docs.tail)
-			case _ => Stream.Empty
+		collection.flatMap(_.insert[Model](ordered = true).many(mappedDocuments)).map { result =>
+			mappedDocuments.foreach(lifeCycle.postPersist)
+			result.n
 		}
-
-		collection.flatMap(_.insert[Model](true).many(mappedDocuments.toIterable))
-
-		collection.flatMap(_.bulkInsert(
-			go(mappedDocuments.toTraversable),
-			true, defaultWriteConcern, bulkSize, bulkByteSize) map { result =>
-				mappedDocuments.map(lifeCycle.postPersist)
-				result.n
-			})
 	}
 
 	def update[U: OWrites](
@@ -197,7 +176,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 
 	def count(selector: JsObject = Json.obj())(implicit ec: ExecutionContext): Future[Int] = collection.flatMap(_.count(Some(selector)))
 
-	def drop()(implicit ec: ExecutionContext): Future[Unit] = collection.flatMap(_.drop())
+	def drop()(implicit ec: ExecutionContext): Future[Boolean] = collection.flatMap(_.drop(failIfNotFound = true))
 
 	def dropSync(timeout: Duration = 10 seconds)(implicit ec: ExecutionContext): Unit = Await.result(drop(), timeout)
 

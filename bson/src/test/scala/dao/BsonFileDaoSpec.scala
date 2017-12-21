@@ -29,11 +29,11 @@ import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class BsonFileDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	override implicit def patienceConfig = PatienceConfig(timeout = Span(20, Seconds), interval = Span(1, Seconds))
 

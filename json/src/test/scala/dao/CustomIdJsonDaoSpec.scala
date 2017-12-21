@@ -27,11 +27,11 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class CustomIdJsonDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	override implicit def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
 
@@ -60,7 +60,7 @@ class CustomIdJsonDaoSpec
 		val customIdModels = CustomIdModel.random(100)
 
 		val futureResult = for {
-			insertResult <- dao.bulkInsert(customIdModels, 1, 1)
+			insertResult <- dao.bulkInsert(customIdModels)
 			models <- dao.findByIds(customIdModels.drop(5).map(_._id): _*)
 		} yield models
 

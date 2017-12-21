@@ -22,7 +22,7 @@ import reactivemongo.api.gridfs.IdProducer
 import reactivemongo.bson.BSONValue
 import reactivemongo.extensions.dao.FileDao.ReadFileWrapper
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 /** {{{
  *  import reactivemongo.extensions.dao.JsonFileDao, JsonFileDao._

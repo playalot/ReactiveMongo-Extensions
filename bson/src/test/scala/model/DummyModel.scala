@@ -20,10 +20,10 @@ import reactivemongo.bson._
 import reactivemongo.extensions.dao.Handlers._
 
 case class DummyModel(
-	_id: BSONObjectID = BSONObjectID.generate,
-	name: String,
-	surname: String,
-	age: Int)
+		_id: BSONObjectID = BSONObjectID.generate,
+		name: String,
+		surname: String,
+		age: Int)
 
 object DummyModel {
 	implicit val dummyModelHandler = Macros.handler[DummyModel]

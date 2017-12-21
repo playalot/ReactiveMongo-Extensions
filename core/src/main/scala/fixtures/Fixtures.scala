@@ -17,7 +17,7 @@
 package reactivemongo.extensions.fixtures
 
 import com.typesafe.config.{ Config, ConfigFactory, ConfigRenderOptions, ConfigResolveOptions }
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import reactivemongo.extensions.util.Logger
@@ -42,10 +42,10 @@ trait Fixtures[T] {
 		Json.parse(toString(config)).as[JsObject]
 
 	protected def resolveConfig(config: Config): Config = {
-		val resolvedConfig = (config.root.keySet diff reserved).foldLeft(config) { (config, collectionName) =>
+		val resolvedConfig = (config.root.keySet.asScala diff reserved).foldLeft(config) { (config, collectionName) =>
 			val collectionConfig = config.getConfig(collectionName)
 
-			val resolvedCollectionConfig = collectionConfig.root.keySet.foldLeft(collectionConfig) { (_collectionConfig, documentName) =>
+			val resolvedCollectionConfig = collectionConfig.root.keySet.asScala.foldLeft(collectionConfig) { (_collectionConfig, documentName) =>
 				val documentConfig = _collectionConfig.getConfig(documentName).resolve(resolveOptions)
 				_collectionConfig.withValue(documentName, documentConfig.root)
 			}.resolve(resolveOptions)
@@ -58,7 +58,7 @@ trait Fixtures[T] {
 	}
 
 	protected def processCollection(collectionName: String, collectionConfig: Config): Future[Int] = {
-		val documents = collectionConfig.root.keySet map { documentName =>
+		val documents = collectionConfig.root.keySet.asScala map { documentName =>
 			val documentConfig = collectionConfig.getConfig(documentName)
 			val document = toJson(documentConfig)
 			Logger.debug(s"Processing ${documentName}: ${document}")
@@ -75,7 +75,7 @@ trait Fixtures[T] {
 
 		val resolvedConfig = resolveConfig(config)
 
-		Future.sequence { (resolvedConfig.root.keySet diff reserved).toSeq map (f(resolvedConfig, _)) }
+		Future.sequence { (resolvedConfig.root.keySet.asScala diff reserved).toSeq map (f(resolvedConfig, _)) }
 	}
 
 	def load(resource: String, resources: String*): Future[Seq[Int]] =

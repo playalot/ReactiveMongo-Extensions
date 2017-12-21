@@ -29,11 +29,11 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class DummyBsonDaoSpec
-		extends FlatSpec
-		with Matchers
-		with ScalaFutures
-		with BeforeAndAfter
-		with OneInstancePerTest {
+	extends FlatSpec
+	with Matchers
+	with ScalaFutures
+	with BeforeAndAfter
+	with OneInstancePerTest {
 
 	override implicit def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
 
@@ -110,7 +110,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			random <- dao.findRandom("age" $gt 50 $lt 60)
 		} yield random
 
@@ -138,7 +138,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureModels = for {
-			insertResult <- dao.bulkInsert(dummyModels, 1, 1)
+			insertResult <- dao.bulkInsert(dummyModels)
 			models <- dao.findAll("age" $gte 50)
 		} yield models
 
@@ -151,7 +151,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureModels = for {
-			insertResult <- dao.bulkInsert(dummyModels, 1, 1)
+			insertResult <- dao.bulkInsert(dummyModels)
 			models <- dao.findAll()
 		} yield models
 
@@ -164,7 +164,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			random <- dao.findRandom()
 		} yield random
 
@@ -180,7 +180,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			selectedModels <- dao.find(page = 2, pageSize = 20, sort = "age" $eq 1)
 		} yield selectedModels
 
@@ -195,7 +195,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			models <- dao.findByIds(dummyModels.map(_._id): _*)
 		} yield models
 
@@ -225,7 +225,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			count <- dao.count()
 		} yield (insertCount, count)
 
@@ -240,7 +240,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureCount = for {
-			insertResult <- dao.bulkInsert(dummyModels, 1, 1)
+			insertResult <- dao.bulkInsert(dummyModels)
 			count <- dao.count("age" $gte 50)
 		} yield count
 
@@ -253,7 +253,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(100)
 
 		val futureCount = for {
-			insertResult <- dao.bulkInsert(dummyModels, 1, 1)
+			insertResult <- dao.bulkInsert(dummyModels)
 			count <- dao.count()
 		} yield count
 
@@ -268,7 +268,7 @@ class DummyBsonDaoSpec
 
 		val futureResult = for {
 			oldTotalAge <- dao.fold(state = 0) { (state, document) => state + document.age }
-			insertResult <- dao.bulkInsert(dummyModels, 1, 1)
+			insertResult <- dao.bulkInsert(dummyModels)
 			totalAge <- dao.fold(state = -oldTotalAge) { (state, document) => state + document.age }
 		} yield totalAge
 
@@ -283,7 +283,7 @@ class DummyBsonDaoSpec
 
 		val futureResult = for {
 			oldTotalAge <- dao.fold(state = 0) { (state, document) => state + document.age }
-			insertResult <- dao.bulkInsert(dummyModels, 1, 1)
+			insertResult <- dao.bulkInsert(dummyModels)
 			totalAge <- {
 				var total = -oldTotalAge // Just for the test case, please don't do this
 				dao.foreach()(total += _.age).map(_ => total)
@@ -354,7 +354,7 @@ class DummyBsonDaoSpec
 		val dummyModels = DummyModel.random(10)
 
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			beforeCount <- dao.count()
 			remove <- dao.removeById(dummyModels.head._id)
 			afterCount <- dao.count()
@@ -370,9 +370,9 @@ class DummyBsonDaoSpec
 
 	it should "remove all documents" in {
 		val dummyModels = DummyModel.random(10)
-
+		dao.collection.map(c => println(c.name))
 		val futureResult = for {
-			insertCount <- dao.bulkInsert(dummyModels, 1, 1)
+			insertCount <- dao.bulkInsert(dummyModels)
 			beforeCount <- dao.count()
 			remove <- dao.removeAll()
 			afterCount <- dao.count()

@@ -69,11 +69,9 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	/** Bulk inserts multiple models.
 	 *
 	 *  @param models A [[scala.collection.TraversableOnce]] of models.
-	 *  @param bulkSize Bulk size
-	 *  @param bulkByteSize Bulk byte size
 	 *  @return The number of successful insertions.
 	 */
-	def bulkInsert(models: TraversableOnce[Model], bulkSize: Int, bulkByteSize: Int)(implicit ec: ExecutionContext): Future[Int]
+	def bulkInsert(models: Iterable[Model])(implicit ec: ExecutionContext): Future[Int]
 
 	/** Reference to the collection this DAO operates on. */
 	def collection: Future[C] = database.map(_.collection[C](collectionName))

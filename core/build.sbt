@@ -8,4 +8,4 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.9.2",
   "org.slf4j" % "slf4j-api" % "1.7.25",
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.3" % "test")
+  "org.scalatest" %% "scalatest" % "3.0.4" % "test")

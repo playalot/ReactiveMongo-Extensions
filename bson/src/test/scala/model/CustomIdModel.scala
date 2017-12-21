@@ -20,10 +20,10 @@ import reactivemongo.bson._
 import reactivemongo.extensions.dao.Handlers._
 
 case class CustomIdModel(
-	_id: String = java.util.UUID.randomUUID.toString,
-	name: String,
-	surname: String,
-	age: Int)
+		_id: String = java.util.UUID.randomUUID.toString,
+		name: String,
+		surname: String,
+		age: Int)
 
 object CustomIdModel {
 	implicit val customIdModelHandler = Macros.handler[CustomIdModel]

@@ -106,12 +106,12 @@ class CustomIdJsonDaoSpec
 	}
 
 	it should "ensure indexes" in {
-		val futureIndexes = Future {
-			// Give some time for indexes to be ensured
-			Thread.sleep(2000)
-		} flatMap { _ =>
-			dao.listIndexes()
-		}
+		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
+		val futureIndexes = for {
+			_ <- dao.save(customIdModel)
+			_ <- dao.ensureIndexes()
+			indexes <- dao.listIndexes()
+		} yield indexes
 
 		whenReady(futureIndexes) { indexes =>
 			indexes should have size 3 // including _id

@@ -33,7 +33,7 @@ trait Fixtures[T] {
 	def map(document: JsObject): T
 	def bulkInsert(collectionName: String, documents: Stream[T]): Future[Int]
 	def removeAll(collectionName: String): Future[WriteResult]
-	def drop(collectionName: String): Future[Unit]
+	def drop(collectionName: String): Future[Boolean]
 
 	protected def toString(config: Config): String =
 		config.root.render(renderOptions)
@@ -89,7 +89,7 @@ trait Fixtures[T] {
 		removeAll(collectionName)
 	}
 
-	def dropAll(resource: String, resources: String*): Future[Seq[Unit]] =
+	def dropAll(resource: String, resources: String*): Future[Seq[Boolean]] =
 		foreachCollection(resource, resources: _*) { (_, collectionName) =>
 			Logger.debug(s"Removing all documents from ${collectionName}.")
 			drop(collectionName)

@@ -21,7 +21,7 @@ import reactivemongo.extensions.json.model.DummyModel
 import reactivemongo.extensions.dao.MongoContext
 import reactivemongo.api.indexes.{ Index, IndexType }
 import reactivemongo.bson.BSONObjectID
-import play.modules.reactivemongo.json.BSONFormats._
+import reactivemongo.play.json.BSONFormats._
 import reactivemongo.extensions.util.Misc.UUID
 
 class DummyJsonDao extends {

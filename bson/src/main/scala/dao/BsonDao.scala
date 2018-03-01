@@ -20,13 +20,15 @@ import scala.util.Random
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import reactivemongo.bson._
-import reactivemongo.api.{ DB, DefaultDB, QueryOpts }
+import reactivemongo.api.{ Cursor, DefaultDB, QueryOpts }
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.commands.{ GetLastError, WriteResult }
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.extensions.dsl.BsonDsl._
-import play.api.libs.iteratee.{ Enumerator, Iteratee }
+import play.api.libs.iteratee.Iteratee
+import reactivemongo.play.iteratees.cursorProducer
 import Handlers._
+import reactivemongo.api.Cursor.FailOnError
 
 /** A DAO implementation operates on BSONCollection using BSONDocument.
  *
@@ -115,13 +117,13 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 			.sort(sort)
 			.options(QueryOpts(skipN = from, batchSizeN = pageSize))
 			.cursor[Model]()
-			.collect[List](pageSize))
+			.collect[List](pageSize, Cursor.FailOnError[List[Model]]()))
 	}
 
 	def findAll(
 		selector: BSONDocument = BSONDocument.empty,
 		sort: BSONDocument = BSONDocument("_id" -> 1))(implicit ec: ExecutionContext): Future[List[Model]] =
-		collection.flatMap(_.find(selector).sort(sort).cursor[Model]().collect[List]())
+		collection.flatMap(_.find(selector).sort(sort).cursor[Model]().collect[List](Int.MaxValue, FailOnError[List[Model]]()))
 
 	@deprecated(
 		since = "0.11.1",
@@ -159,7 +161,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 	def bulkInsert(documents: Iterable[Model])(implicit ec: ExecutionContext): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
 		collection.flatMap(_.insert[Model](ordered = true).many(mappedDocuments)).map { result =>
-			mappedDocuments.map(lifeCycle.postPersist)
+			mappedDocuments.foreach(lifeCycle.postPersist)
 			result.n
 		}
 	}
@@ -219,20 +221,22 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 	def foreach(
 		selector: BSONDocument = BSONDocument.empty,
 		sort: BSONDocument = BSONDocument("_id" -> 1))(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
-		collection.flatMap(_.find(selector).sort(sort).cursor[Model]()
-			.enumerate()
-			.apply(Iteratee.foreach(f))
-			.flatMap(i => i.run))
+		collection.flatMap { c =>
+			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
+			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)
+			enumerator.run(process)
+		}
 	}
 
 	def fold[A](
 		selector: BSONDocument = BSONDocument.empty,
 		sort: BSONDocument = BSONDocument("_id" -> 1),
 		state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
-		collection.flatMap(_.find(selector).sort(sort).cursor[Model]()
-			.enumerate()
-			.apply(Iteratee.fold(state)(f))
-			.flatMap(i => i.run))
+		collection.flatMap { c =>
+			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
+			val process: Iteratee[Model, A] = Iteratee.fold(state)(f)
+			enumerator.run(process)
+		}
 	}
 
 	ensureIndexes()

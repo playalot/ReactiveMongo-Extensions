@@ -17,28 +17,26 @@
 package reactivemongo.extensions.fixtures
 
 import scala.concurrent.{ ExecutionContext, Future }
-import play.api.libs.iteratee.Enumerator
 import play.api.libs.json.JsObject
 import reactivemongo.bson.BSONDocument
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.play.json.BSONFormats
-import reactivemongo.extensions.util.Logger
 
 class BsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) extends Fixtures[BSONDocument] {
 	def map(document: JsObject): BSONDocument =
 		BSONFormats.BSONDocumentFormat.reads(document).get
 
 	def bulkInsert(collectionName: String, documents: Stream[BSONDocument]): Future[Int] = db.flatMap(_.collection[BSONCollection](
-		collectionName).bulkInsert(documents, ordered = true).map(_.n))
+		collectionName).insert[BSONDocument](ordered = true).many(documents).map(_.n))
 
 	def removeAll(collectionName: String): Future[WriteResult] =
 		db.flatMap(_.collection[BSONCollection](collectionName).
 			remove(selector = BSONDocument.empty, firstMatchOnly = false))
 
-	def drop(collectionName: String): Future[Unit] =
-		db.flatMap(_.collection[BSONCollection](collectionName).drop())
+	def drop(collectionName: String): Future[Boolean] =
+		db.flatMap(_.collection[BSONCollection](collectionName).drop(failIfNotFound = true))
 
 }
 

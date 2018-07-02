@@ -4,9 +4,9 @@ name := "reactivemongo-extensions"
 
 lazy val commonSettings = Seq(
   organization := "cn.playalot",
-  version := "0.13.0",
-  scalaVersion  := "2.12.4",
-  crossScalaVersions := Seq("2.11.11", "2.12.4"),
+  version := "0.14.0",
+  scalaVersion  := "2.12.6",
+  crossScalaVersions := Seq("2.12.6"),
   crossVersion := CrossVersion.binary,
   scalacOptions := Seq(
     "-unchecked",
@@ -64,7 +64,7 @@ lazy val publishSettings = Seq(
     </developers>)
 
 val travisSettings = Seq(
-  Travis.travisSnapshotBranches := Seq("0.12.x"),
+  Travis.travisSnapshotBranches := Seq("0.14.x"),
   commands += Travis.travisCommand
 )
 

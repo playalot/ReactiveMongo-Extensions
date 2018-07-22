@@ -35,6 +35,7 @@ import reactivemongo.extensions.util.Logger
 import reactivemongo.extensions.Implicits._
 import scala.concurrent.{ Future, Await }
 import scala.concurrent.ExecutionContext.Implicits.global
+import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 
 class DynamicJsonDaoSpec
 	extends FlatSpec
@@ -42,8 +43,6 @@ class DynamicJsonDaoSpec
 	with ScalaFutures
 	with BeforeAndAfter
 	with OneInstancePerTest {
-
-	import play.modules.reactivemongo.json._
 
 	override implicit def patienceConfig = PatienceConfig(timeout = Span(20, Seconds), interval = Span(1, Seconds))
 

@@ -204,7 +204,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	/** Inserts the document, or updates it if it already exists in the collection.
 	 *
 	 *  @param model The model to save.
-	 *  @param writeConcern the [[reactivemongo.core.commands.GetLastError]] command message to send in order to control
+	 *  @param writeConcern the [[reactivemongo.api.commands.GetLastError]] command message to send in order to control
 	 *                  how the document is inserted. Defaults to defaultWriteConcern.
 	 */
 	def save(model: Model, writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]

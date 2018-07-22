@@ -21,7 +21,7 @@ import reactivemongo.extensions.dao.MongoContext
 import reactivemongo.extensions.json.model.TemporalModel
 import reactivemongo.extensions.util.Misc.UUID
 import reactivemongo.bson.BSONObjectID
-import play.modules.reactivemongo.json.BSONFormats._
+import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 
 class TemporalModelJsonDao
 	extends JsonDao[TemporalModel, BSONObjectID](MongoContext.db, "temporal_model_" + UUID())

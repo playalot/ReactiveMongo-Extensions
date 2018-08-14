@@ -108,7 +108,7 @@ class CustomIdBsonDaoSpec
 	it should "ensure indexes" in {
 		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
 		val futureIndexes = for {
-			_ <- dao.save(customIdModel)
+			_ <- dao.save(customIdModel._id, customIdModel)
 			_ <- dao.ensureIndexes()
 			indexes <- dao.listIndexes()
 		} yield indexes

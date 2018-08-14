@@ -22,7 +22,7 @@ import scala.concurrent.duration._
 import reactivemongo.bson._
 import reactivemongo.api.{ Cursor, DefaultDB, QueryOpts }
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.commands.{ GetLastError, WriteResult }
+import reactivemongo.api.commands.{ WriteConcern, WriteResult }
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.extensions.dsl.BsonDsl._
 import play.api.libs.iteratee.Iteratee
@@ -125,9 +125,6 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		sort: BSONDocument = BSONDocument("_id" -> 1))(implicit ec: ExecutionContext): Future[List[Model]] =
 		collection.flatMap(_.find(selector).sort(sort).cursor[Model]().collect[List](Int.MaxValue, FailOnError[List[Model]]()))
 
-	@deprecated(
-		since = "0.11.1",
-		message = "Directly use [[findAndUpdate]] collection operation")
 	def findAndUpdate(
 		query: BSONDocument,
 		update: BSONDocument,
@@ -136,9 +133,6 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		upsert: Boolean = false)(implicit ec: ExecutionContext): Future[Option[Model]] = collection.flatMap(_.findAndUpdate(
 		query, update, fetchNewObject, upsert).map(_.result[Model]))
 
-	@deprecated(
-		since = "0.11.1",
-		message = "Directly use [[findAndRemove]] collection operation")
 	def findAndRemove(query: BSONDocument, sort: BSONDocument = BSONDocument.empty)(implicit ec: ExecutionContext): Future[Option[Model]] =
 		collection.flatMap(_.findAndRemove(
 			query, if (sort == BSONDocument.empty) None else Some(sort)).
@@ -150,7 +144,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		random <- collection.flatMap(_.find(selector).options(QueryOpts(skipN = index, batchSizeN = 1)).one[Model])
 	} yield random
 
-	def insert(model: Model, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
+	def insert(model: Model, writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val mappedModel = lifeCycle.prePersist(model)
 		collection.flatMap(_.insert(mappedModel, writeConcern) map { writeResult =>
 			lifeCycle.postPersist(mappedModel)
@@ -169,18 +163,17 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 	def update[U: BSONDocumentWriter](
 		selector: BSONDocument,
 		update: U,
-		writeConcern: GetLastError = defaultWriteConcern,
+		writeConcern: WriteConcern = defaultWriteConcern,
 		upsert: Boolean = false,
 		multi: Boolean = false)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update(selector, update, writeConcern, upsert, multi))
 
 	def updateById[U: BSONDocumentWriter](
 		id: ID,
 		update: U,
-		writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update($id(id), update, writeConcern))
+		writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update($id(id), update, writeConcern))
 
-	def save(model: Model, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
+	def save(id: ID, model: Model, writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val writer = implicitly[BSONDocumentWriter[Model]]
-
 		for {
 			doc <- Future(writer write model)
 			_id <- Future(doc.getAs[ID]("_id").get)
@@ -201,9 +194,9 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def dropSync(timeout: Duration = 10 seconds)(implicit ec: ExecutionContext): Unit = Await.result(drop(), timeout)
 
-	def removeById(id: ID, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
+	def removeById(id: ID)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		lifeCycle.preRemove(id)
-		collection.flatMap(_.remove($id(id), writeConcern = defaultWriteConcern) map { res =>
+		collection.flatMap(_.delete(ordered = false).one($id(id)) map { res =>
 			lifeCycle.postRemove(id)
 			res
 		})
@@ -211,11 +204,10 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def remove(
 		query: BSONDocument,
-		writeConcern: GetLastError = defaultWriteConcern,
-		firstMatchOnly: Boolean = false)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.remove(query, writeConcern, firstMatchOnly))
+		limit: Option[Int] = None)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.delete().one(query, limit, collation = None))
 
-	def removeAll(writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
-		collection.flatMap(_.remove(selector = BSONDocument.empty, writeConcern = writeConcern, firstMatchOnly = false))
+	def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = {
+		collection.flatMap(_.delete().one(BSONDocument.empty, None, None))
 	}
 
 	def foreach(

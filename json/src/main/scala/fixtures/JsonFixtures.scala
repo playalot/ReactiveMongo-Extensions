@@ -17,7 +17,6 @@
 package reactivemongo.extensions.json.fixtures
 
 import scala.concurrent.{ ExecutionContext, Future }
-import reactivemongo.extensions.util.Logger
 import reactivemongo.extensions.fixtures.Fixtures
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.commands.WriteResult
@@ -35,7 +34,7 @@ class JsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) exte
 
 	def removeAll(collectionName: String): Future[WriteResult] =
 		db.flatMap(_.collection[JSONCollection](collectionName).
-			remove(selector = Json.obj(), firstMatchOnly = false))
+			delete().one(Json.obj()))
 
 	def drop(collectionName: String): Future[Boolean] =
 		db.flatMap(_.collection[JSONCollection](collectionName).drop(failIfNotFound = true))

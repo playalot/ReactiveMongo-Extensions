@@ -20,7 +20,7 @@ import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.SpanSugar._
 import play.api.libs.json.Json
-import play.modules.reactivemongo.json._
+import reactivemongo.play.json._
 import reactivemongo.extensions.json.model.CustomIdModel
 import reactivemongo.extensions.json.dsl.JsonDsl._
 import scala.concurrent.Future
@@ -108,7 +108,7 @@ class CustomIdJsonDaoSpec
 	it should "ensure indexes" in {
 		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
 		val futureIndexes = for {
-			_ <- dao.save(customIdModel)
+			_ <- dao.save(customIdModel._id, customIdModel)
 			_ <- dao.ensureIndexes()
 			indexes <- dao.listIndexes()
 		} yield indexes

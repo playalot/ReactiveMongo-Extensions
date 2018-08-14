@@ -19,7 +19,7 @@ package reactivemongo.extensions.json.model
 import reactivemongo.bson._
 import reactivemongo.extensions.dao.Handlers._
 import play.api.libs.json.Json
-import play.modules.reactivemongo.json.BSONFormats._
+import reactivemongo.play.json.BSONFormats._
 
 case class Event(
 		_id: String,

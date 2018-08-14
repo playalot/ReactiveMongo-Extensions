@@ -94,10 +94,10 @@ class MapModelBsonDaoSpec
 		val mapModel = MapModel(data = Map("count" -> 1))
 
 		val futureResult = for {
-			insert <- dao.save(mapModel)
+			insert <- dao.save(mapModel._id, mapModel)
 			maybeInsertedDummyModel <- dao.findById(mapModel._id)
 			newData = mapModel.data + ("total" -> 2, "count" -> 2)
-			update <- dao.save(mapModel.copy(data = newData))
+			update <- dao.save(mapModel._id, mapModel.copy(data = newData))
 			maybeUpdatedDummyModel <- dao.findById(mapModel._id)
 		} yield (maybeInsertedDummyModel, maybeUpdatedDummyModel)
 

@@ -16,13 +16,12 @@
 
 package reactivemongo.extensions.dao
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
-
-import reactivemongo.api.{ DB, Collection, CollectionProducer }
+import reactivemongo.api.{ Collection, CollectionProducer, DB }
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.commands.{ GetLastError, WriteResult }
+import reactivemongo.api.commands.{ WriteConcern, WriteResult }
 
 /** Base class for all DAO implementations. This class defines the API for all DAOs.
  *
@@ -86,7 +85,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 *
 	 *  Related API functions should allow overriding this value.
 	 */
-	def defaultWriteConcern: GetLastError = GetLastError.Default
+	def defaultWriteConcern: WriteConcern = WriteConcern.Default
 
 	/** Drops this collection */
 	def drop()(implicit ec: ExecutionContext): Future[Boolean]
@@ -174,7 +173,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	def foreach(selector: Structure, sort: Structure)(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit]
 
 	/** Inserts the given model. */
-	def insert(model: Model, writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]
+	def insert(model: Model, writeConcern: WriteConcern)(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Lists indexes that are currently ensured in this collection.
 	 *
@@ -192,14 +191,13 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 */
 	def remove(
 		selector: Structure,
-		writeConcern: GetLastError,
-		firstMatchOnly: Boolean)(implicit ec: ExecutionContext): Future[WriteResult]
+		limit: Option[Int])(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Removes all documents in this collection. */
-	def removeAll(writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]
+	def removeAll()(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Removes the document with the given ID. */
-	def removeById(id: ID, writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]
+	def removeById(id: ID)(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Inserts the document, or updates it if it already exists in the collection.
 	 *
@@ -207,7 +205,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 *  @param writeConcern the [[reactivemongo.api.commands.GetLastError]] command message to send in order to control
 	 *                  how the document is inserted. Defaults to defaultWriteConcern.
 	 */
-	def save(model: Model, writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]
+	def save(id: ID, model: Model, writeConcern: WriteConcern)(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Updates the documents matching the given selector.
 	 *
@@ -221,7 +219,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	def update[U: Writer](
 		selector: Structure,
 		update: U,
-		writeConcern: GetLastError,
+		writeConcern: WriteConcern,
 		upsert: Boolean,
 		multi: Boolean)(implicit ec: ExecutionContext): Future[WriteResult]
 
@@ -232,5 +230,5 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 *  @param writeConcern Write concern which defaults to defaultWriteConcern.
 	 *  @tparam U Type of the update query.
 	 */
-	def updateById[U: Writer](id: ID, update: U, writeConcern: GetLastError)(implicit ec: ExecutionContext): Future[WriteResult]
+	def updateById[U: Writer](id: ID, update: U, writeConcern: WriteConcern)(implicit ec: ExecutionContext): Future[WriteResult]
 }

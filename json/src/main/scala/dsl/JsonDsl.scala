@@ -18,7 +18,7 @@ package reactivemongo.extensions.json.dsl
 
 import play.api.libs.json._
 import play.api.libs.json.Json.{ JsValueWrapper, toJsFieldJsValueWrapper }
-import reactivemongo.bson.{ BSONValue, BSONDocument }
+import reactivemongo.bson.BSONValue
 import reactivemongo.extensions.BsonTypes
 import scala.reflect.runtime.universe.TypeTag
 

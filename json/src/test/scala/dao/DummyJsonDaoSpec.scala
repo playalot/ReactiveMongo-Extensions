@@ -270,9 +270,9 @@ class DummyJsonDaoSpec
 		val dummyModel = DummyModel(name = "foo", surname = "bar", age = 32)
 
 		val futureResult = for {
-			insert <- dao.save(dummyModel)
+			insert <- dao.save(dummyModel._id, dummyModel)
 			maybeInsertedDummyModel <- dao.findById(dummyModel._id)
-			update <- dao.save(dummyModel.copy(age = 64))
+			update <- dao.save(dummyModel._id, dummyModel.copy(age = 64))
 			maybeUpdatedDummyModel <- dao.findById(dummyModel._id)
 		} yield (maybeInsertedDummyModel, maybeUpdatedDummyModel)
 
@@ -293,7 +293,7 @@ class DummyJsonDaoSpec
 	it should "ensure indexes" in {
 		val dummyModel = DummyModel(name = "foo", surname = "bar", age = 32)
 		val futureIndexes = for {
-			_ <- dao.save(dummyModel)
+			_ <- dao.save(dummyModel._id, dummyModel)
 			_ <- dao.ensureIndexes()
 			indexes <- dao.listIndexes()
 		} yield indexes

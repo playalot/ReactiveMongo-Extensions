@@ -16,11 +16,12 @@
 
 package reactivemongo.extensions.dao
 
-import play.api.libs.json.{ JsObject, JsValue, Json, Writes }
-import reactivemongo.api.{ DB, DBMetaCommands, DefaultDB }
+import play.api.libs.json.{ JsObject, JsValue }
+import reactivemongo.api.{ DB, DBMetaCommands }
 import reactivemongo.api.gridfs.IdProducer
 import reactivemongo.bson.BSONValue
 import reactivemongo.extensions.dao.FileDao.ReadFileWrapper
+import reactivemongo.extensions.json.dsl.JsonDsl.$id
 
 import scala.concurrent.ExecutionContext
 
@@ -31,10 +32,10 @@ import scala.concurrent.ExecutionContext
 abstract class JsonFileDao[Id <: JsValue: IdProducer](db: => DB with DBMetaCommands, collectionName: String)(implicit gridFsId: Id => BSONValue)
 	extends FileDao[Id, JsObject](db, collectionName) {
 
-	import play.modules.reactivemongo.json.JsObjectWriter
+	import reactivemongo.play.json.JsObjectWriter
 
 	def findById(id: Id)(implicit ec: ExecutionContext): ReadFileWrapper =
-		findOne(Json.obj("_id" -> id))
+		findOne($id(id))
 }
 
 object JsonFileDao {

@@ -21,8 +21,8 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import reactivemongo.api.{ Cursor, DB, DefaultDB, QueryOpts }
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.commands.{ GetLastError, WriteResult }
-import play.modules.reactivemongo.json._
+import reactivemongo.api.commands.{ WriteConcern, WriteResult }
+import reactivemongo.play.json._
 import reactivemongo.extensions.dao.{ Dao, LifeCycle, ReflexiveLifeCycle }
 import reactivemongo.extensions.json.dsl.JsonDsl._
 import play.api.libs.json.{ JsObject, Json, OFormat, OWrites, Writes }
@@ -140,7 +140,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		random <- collection.flatMap(_.find(selector).options(QueryOpts(skipN = index, batchSizeN = 1)).one[Model])
 	} yield random
 
-	def insert(model: Model, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
+	def insert(model: Model, writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val mappedModel = lifeCycle.prePersist(model)
 		collection.flatMap(_.insert(mappedModel, writeConcern) map { writeResult =>
 			lifeCycle.postPersist(mappedModel)
@@ -159,18 +159,18 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 	def update[U: OWrites](
 		selector: JsObject,
 		update: U,
-		writeConcern: GetLastError = defaultWriteConcern,
+		writeConcern: WriteConcern = defaultWriteConcern,
 		upsert: Boolean = false,
 		multi: Boolean = false)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update(selector, update, writeConcern, upsert, multi))
 
 	def updateById[U: OWrites](
 		id: ID,
 		update: U,
-		writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update($id(id), update, writeConcern))
+		writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = collection.flatMap(_.update($id(id), update, writeConcern))
 
-	def save(model: Model, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
+	def save(id: ID, model: Model, writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val mappedModel = lifeCycle.prePersist(model)
-		collection.flatMap(_.save(mappedModel, writeConcern) map { lastError =>
+		collection.flatMap(_.update($id(id), mappedModel, writeConcern, upsert = true) map { lastError =>
 			lifeCycle.postPersist(mappedModel)
 			lastError
 		})
@@ -182,9 +182,9 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 
 	def dropSync(timeout: Duration = 10 seconds)(implicit ec: ExecutionContext): Unit = Await.result(drop(), timeout)
 
-	def removeById(id: ID, writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
+	def removeById(id: ID)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		lifeCycle.preRemove(id)
-		collection.flatMap(_.remove($id(id), writeConcern = defaultWriteConcern) map { lastError =>
+		collection.flatMap(_.delete(ordered = false).one($id(id)) map { lastError =>
 			lifeCycle.postRemove(id)
 			lastError
 		})
@@ -192,18 +192,17 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 
 	def remove(
 		query: JsObject,
-		writeConcern: GetLastError = defaultWriteConcern,
-		firstMatchOnly: Boolean = false)(implicit ec: ExecutionContext): Future[WriteResult] = {
-		collection.flatMap(_.remove(query, writeConcern, firstMatchOnly))
+		limit: Option[Int] = None)(implicit ec: ExecutionContext): Future[WriteResult] = {
+		collection.flatMap(_.delete().one(query, limit, collation = None))
 	}
 
-	def removeAll(writeConcern: GetLastError = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
-		collection.flatMap(_.remove(selector = Json.obj(), writeConcern = writeConcern, firstMatchOnly = false))
+	def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = {
+		collection.flatMap(_.delete().one(Json.obj(), None, None))
 	}
 
 	def foreach(
 		selector: JsObject = Json.obj(),
-		sort: JsObject = Json.obj("_id" -> 1))(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
+		sort: JsObject = Json.obj("_id" -> 1))(f: Model => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
 		collection.flatMap { c =>
 			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
 			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)

@@ -1,9 +1,8 @@
 language: scala
-sudo: false
+sudo: true
 script: sbt ++$TRAVIS_SCALA_VERSION 'test'
 scala:
-- 2.12.4
-- 2.11.11
+- 2.12.6
 jdk:
 - oraclejdk8
 services: mongodb

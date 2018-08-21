@@ -370,7 +370,6 @@ class DummyBsonDaoSpec
 
 	it should "remove all documents" in {
 		val dummyModels = DummyModel.random(10)
-		dao.collection.map(c => println(c.name))
 		val futureResult = for {
 			insertCount <- dao.bulkInsert(dummyModels)
 			beforeCount <- dao.count()

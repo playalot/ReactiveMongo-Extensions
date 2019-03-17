@@ -30,11 +30,10 @@ class JsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) exte
 	def map(document: JsObject): JsObject = document
 
 	def bulkInsert(collectionName: String, documents: Stream[JsObject]): Future[Int] = db.flatMap(_.collection[JSONCollection](
-		collectionName).insert[JsObject](ordered = true).many(documents).map(_.n))
+		collectionName).insert(ordered = true).many(documents).map(_.n))
 
 	def removeAll(collectionName: String): Future[WriteResult] =
-		db.flatMap(_.collection[JSONCollection](collectionName).
-			delete().one(Json.obj()))
+		db.flatMap(_.collection[JSONCollection](collectionName).delete().one(Json.obj()))
 
 	def drop(collectionName: String): Future[Boolean] =
 		db.flatMap(_.collection[JSONCollection](collectionName).drop(failIfNotFound = true))

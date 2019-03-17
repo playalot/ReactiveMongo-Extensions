@@ -82,6 +82,8 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 	extends Dao[JSONCollection, JsObject, Model, ID, OWrites](
 		database, collectionName) {
 
+	BSONDocumentWrites
+
 	def ensureIndexes()(implicit ec: ExecutionContext): Future[Traversable[Boolean]] = Future sequence {
 		autoIndexes map { index =>
 			collection.flatMap(_.indexesManager.ensure(index))
@@ -94,7 +96,8 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 	def listIndexes()(implicit ec: ExecutionContext): Future[List[Index]] =
 		collection.flatMap(_.indexesManager.list())
 
-	def findOne(selector: JsObject = Json.obj())(implicit ec: ExecutionContext): Future[Option[Model]] = collection.flatMap(_.find(selector).one[Model])
+	def findOne(selector: JsObject = Json.obj())(implicit ec: ExecutionContext): Future[Option[Model]] =
+		collection.flatMap(_.find(selector).one[Model])
 
 	def findById(id: ID)(implicit ec: ExecutionContext): Future[Option[Model]] =
 		findOne($id(id))
@@ -142,7 +145,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 
 	def insert(model: Model, writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val mappedModel = lifeCycle.prePersist(model)
-		collection.flatMap(_.insert(mappedModel, writeConcern) map { writeResult =>
+		collection.flatMap(_.insert.one(mappedModel) map { writeResult =>
 			lifeCycle.postPersist(mappedModel)
 			writeResult
 		})
@@ -150,7 +153,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 
 	def bulkInsert(documents: Iterable[Model])(implicit ec: scala.concurrent.ExecutionContext): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
-		collection.flatMap(_.insert[Model](ordered = true).many(mappedDocuments)).map { result =>
+		collection.flatMap(_.insert(ordered = true).many(mappedDocuments)).map { result =>
 			mappedDocuments.foreach(lifeCycle.postPersist)
 			result.n
 		}

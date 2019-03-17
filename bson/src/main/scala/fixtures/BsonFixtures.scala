@@ -29,11 +29,10 @@ class BsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) exte
 		BSONFormats.BSONDocumentFormat.reads(document).get
 
 	def bulkInsert(collectionName: String, documents: Stream[BSONDocument]): Future[Int] = db.flatMap(_.collection[BSONCollection](
-		collectionName).insert[BSONDocument](ordered = true).many(documents).map(_.n))
+		collectionName).insert(ordered = true).many(documents).map(_.n))
 
 	def removeAll(collectionName: String): Future[WriteResult] =
-		db.flatMap(_.collection[BSONCollection](collectionName).
-			remove(selector = BSONDocument.empty, firstMatchOnly = false))
+		db.flatMap(_.collection[BSONCollection](collectionName).delete.one(BSONDocument.empty))
 
 	def drop(collectionName: String): Future[Boolean] =
 		db.flatMap(_.collection[BSONCollection](collectionName).drop(failIfNotFound = true))

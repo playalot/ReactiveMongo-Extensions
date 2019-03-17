@@ -27,12 +27,13 @@ import reactivemongo.api.gridfs.{
 	DefaultFileToSave,
 	ReadFile,
 	FileToSave,
-	GridFS,
 	IdProducer,
 	Implicits
 }, Implicits.DefaultReadFileReader
 import reactivemongo.bson.{ BSONDocumentReader, BSONDocumentWriter, BSONValue }
 import reactivemongo.api.commands.WriteResult
+
+import reactivemongo.play.iteratees.GridFS
 
 import reactivemongo.extensions.dao.FileDao.ReadFileWrapper
 

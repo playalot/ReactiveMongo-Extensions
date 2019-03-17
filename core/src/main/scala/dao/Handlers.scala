@@ -31,39 +31,31 @@ object Handlers {
 	}
 
 	implicit def MapBSONReader[T](implicit reader: BSONReader[_ <: BSONValue, T]): BSONDocumentReader[Map[String, T]] =
-		new BSONDocumentReader[Map[String, T]] {
-			def read(doc: BSONDocument): Map[String, T] = {
-				doc.elements.collect {
-					case ele => ele.value.seeAsOpt[T](reader) map {
-						ov => (ele.name, ov)
-					}
-				}.flatten.toMap
-			}
+		(doc: BSONDocument) => {
+			doc.elements.collect {
+				case ele => ele.value.seeAsOpt[T](reader) map {
+					ov => (ele.name, ov)
+				}
+			}.flatten.toMap
 		}
 
-	implicit def MapBSONWriter[T](implicit writer: BSONWriter[T, _ <: BSONValue]): BSONDocumentWriter[Map[String, T]] = new BSONDocumentWriter[Map[String, T]] {
-		def write(doc: Map[String, T]): BSONDocument = {
-			BSONDocument(doc.toTraversable map (t => (t._1, writer.write(t._2))))
-		}
+	implicit def MapBSONWriter[T](implicit writer: BSONWriter[T, _ <: BSONValue]): BSONDocumentWriter[Map[String, T]] = (doc: Map[String, T]) => {
+		BSONDocument(doc map (t => (t._1, writer.write(t._2))))
 	}
 
-	implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] = new BSONDocumentReader[Map[String, V]] {
-		def read(bson: BSONDocument): Map[String, V] = {
-			val elements = bson.elements.map { ele =>
-				// assume that all values in the document are BSONDocuments
-				ele.name -> vr.read(ele.value.seeAsTry[BSONDocument].get)
-			}
-			elements.toMap
+	implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] = (bson: BSONDocument) => {
+		val elements = bson.elements.map { ele =>
+			// assume that all values in the document are BSONDocuments
+			ele.name -> vr.read(ele.value.seeAsTry[BSONDocument].get)
 		}
+		elements.toMap
 	}
 
-	implicit def MapWriter[V](implicit vw: BSONDocumentWriter[V]): BSONDocumentWriter[Map[String, V]] = new BSONDocumentWriter[Map[String, V]] {
-		def write(map: Map[String, V]): BSONDocument = {
-			val elements = map.toStream.map { tuple =>
-				tuple._1 -> vw.write(tuple._2)
-			}
-			BSONDocument(elements)
+	implicit def MapWriter[V](implicit vw: BSONDocumentWriter[V]): BSONDocumentWriter[Map[String, V]] = (map: Map[String, V]) => {
+		val elements = map.toStream.map { tuple =>
+			tuple._1 -> vw.write(tuple._2)
 		}
+		BSONDocument(elements)
 	}
 
 	implicit object BSONIntegerHandler extends BSONReader[BSONValue, Int] {

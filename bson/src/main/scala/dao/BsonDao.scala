@@ -146,7 +146,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def insert(model: Model, writeConcern: WriteConcern = defaultWriteConcern)(implicit ec: ExecutionContext): Future[WriteResult] = {
 		val mappedModel = lifeCycle.prePersist(model)
-		collection.flatMap(_.insert(mappedModel, writeConcern) map { writeResult =>
+		collection.flatMap(_.insert.one(mappedModel) map { writeResult =>
 			lifeCycle.postPersist(mappedModel)
 			writeResult
 		})
@@ -154,7 +154,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def bulkInsert(documents: Iterable[Model])(implicit ec: ExecutionContext): Future[Int] = {
 		val mappedDocuments = documents.map(lifeCycle.prePersist)
-		collection.flatMap(_.insert[Model](ordered = true).many(mappedDocuments)).map { result =>
+		collection.flatMap(_.insert(ordered = true).many(mappedDocuments)).map { result =>
 			mappedDocuments.foreach(lifeCycle.postPersist)
 			result.n
 		}
@@ -212,7 +212,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 
 	def foreach(
 		selector: BSONDocument = BSONDocument.empty,
-		sort: BSONDocument = BSONDocument("_id" -> 1))(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
+		sort: BSONDocument = BSONDocument("_id" -> 1))(f: Model => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
 		collection.flatMap { c =>
 			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
 			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)

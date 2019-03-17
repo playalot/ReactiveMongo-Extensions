@@ -20,7 +20,7 @@ object Travis {
       println(s"publishing $thisRef from travis...")
 
       val newState =
-        append(
+        appendWithSession(
           Seq(
             publishTo := Some("Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"),
             credentials := Seq(Credentials(

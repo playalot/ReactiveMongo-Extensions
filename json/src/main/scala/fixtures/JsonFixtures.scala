@@ -22,7 +22,6 @@ import reactivemongo.api.DefaultDB
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.play.json._
 import collection.JSONCollection
-import play.api.libs.iteratee.Enumerator
 import play.api.libs.json.{ JsObject, Json }
 
 class JsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) extends Fixtures[JsObject] {

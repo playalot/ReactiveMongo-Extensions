@@ -186,12 +186,9 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 *  In order to remove multiple documents `firstMatchOnly` has to be `false`.
 	 *
 	 *  @param selector Selector document.
-	 *  @param writeConcern Write concern defaults to `defaultWriteConcern`.
-	 *  @param firstMatchOnly Remove only the first matching document.
+	 *  @param limit Num of documents to be removed.
 	 */
-	def remove(
-		selector: Structure,
-		limit: Option[Int])(implicit ec: ExecutionContext): Future[WriteResult]
+	def remove(selector: Structure, limit: Option[Int])(implicit ec: ExecutionContext): Future[WriteResult]
 
 	/** Removes all documents in this collection. */
 	def removeAll()(implicit ec: ExecutionContext): Future[WriteResult]

@@ -7,7 +7,7 @@ The goal of *ReactiveMongo Extensions* is to provide all the necessary tools for
 
 [![Build Status](https://travis-ci.org/playalot/ReactiveMongo-Extensions.svg?branch=master)](https://travis-ci.org/playalot/ReactiveMongo-Extensions)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.11/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.12/)
 
 ## Introduction
 

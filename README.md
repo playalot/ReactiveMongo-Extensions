@@ -276,13 +276,13 @@ Current version matrix is below:
 
 | reactivemongo-extensions-bson    | Target ReactiveMongo version |
 |----------------------------------|------------------------------|
-| 0.12.3                           | 0.12.3                       |
+| 0.16.6                           | 0.16.6                       |
 
 | reactivemongo-extensions-json    | Target Play-ReactiveMongo version |
 |----------------------------------|-----------------------------------|
-| 0.12.3                           | 0.12.3                            |
+| 0.16.6                           | 0.16.6                            |
 
-Note: Only available for scala 2.11.
+Note: Only available for scala 2.12.
 
 If you use SBT, you just have to edit build.sbt and add the following:
 
@@ -290,7 +290,7 @@ If you use SBT, you just have to edit build.sbt and add the following:
 resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 libraryDependencies ++= Seq(
-  "cn.playalot" %% "reactivemongo-extensions-bson" % "0.12.3"
+  "cn.playalot" %% "reactivemongo-extensions-bson" % "0.16.6"
 )
 ```
 

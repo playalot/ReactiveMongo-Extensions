@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
   organization := "cn.playalot",
   version := "0.17.1",
   scalaVersion  := "2.12.8",
-  crossScalaVersions := Seq("2.12.8, 2.13.0"),
+  crossScalaVersions := Seq("2.12.8", "2.13.0"),
   crossVersion := CrossVersion.binary,
   scalacOptions := Seq(
     "-unchecked",

@@ -12,6 +12,6 @@ object Common {
   }
 
   val playJsonVersion = "2.7.4"
-  val reactiveMongoVersion = "0.17.1"
-  val playReactiveMongoVersion = "0.17.1-play27"
+  val reactiveMongoVersion = "0.18.0"
+  val playReactiveMongoVersion = "0.18.0-play27"
 }

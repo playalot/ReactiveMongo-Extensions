@@ -5,7 +5,7 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "reactivemongo-iteratees" % Common.reactiveMongoVersion,
   "com.typesafe.play" %% "play-json" % Common.playJsonVersion % "provided",
   "com.typesafe" % "config" % "1.3.4",
-  "joda-time" % "joda-time" % "2.10.2",
+  "joda-time" % "joda-time" % "2.10.3",
   "org.slf4j" % "slf4j-api" % "1.7.26",
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test")

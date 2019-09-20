@@ -6,6 +6,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.4.2")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.0")
 
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.5")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.6")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.2")

@@ -33,7 +33,7 @@ import scala.reflect.runtime.universe._
 object Typed {
 	/// Class Types
 	class PropertyAccess[T] extends Dynamic {
-		def selectDynamic(property: String) = macro PropertyAccess.select[T]
+		def selectDynamic(property: String): Any = macro PropertyAccess.select[T]
 	}
 
 	object PropertyAccess {

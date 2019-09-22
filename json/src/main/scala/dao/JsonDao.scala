@@ -26,10 +26,10 @@ import reactivemongo.play.json._
 import reactivemongo.extensions.dao.{ Dao, LifeCycle, ReflexiveLifeCycle }
 import reactivemongo.extensions.json.dsl.JsonDsl._
 import play.api.libs.json.{ JsObject, Json, OFormat, OWrites, Writes }
-import play.api.libs.iteratee.Iteratee
+//import play.api.libs.iteratee.Iteratee
 import reactivemongo.api.Cursor.FailOnError
 import reactivemongo.play.json.collection.JSONCollection
-import reactivemongo.play.iteratees.cursorProducer
+//import reactivemongo.play.iteratees.cursorProducer
 
 /** A DAO implementation that operates on JSONCollection using JsObject.
  *
@@ -84,7 +84,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 
 	BSONDocumentWrites
 
-	def ensureIndexes()(implicit ec: ExecutionContext): Future[Traversable[Boolean]] = Future sequence {
+	def ensureIndexes()(implicit ec: ExecutionContext): Future[Iterable[Boolean]] = Future sequence {
 		autoIndexes map { index =>
 			collection.flatMap(_.indexesManager.ensure(index))
 		}
@@ -110,7 +110,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		sort: JsObject = Json.obj("_id" -> 1),
 		page: Int,
 		pageSize: Int)(implicit ec: ExecutionContext): Future[List[Model]] = {
-		val from = (page - 1) * pageSize
+		val from = page * pageSize
 		collection.flatMap(_
 			.find(selector)
 			.sort(sort)
@@ -203,26 +203,26 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 		collection.flatMap(_.delete().one(Json.obj(), None, None))
 	}
 
-	def foreach(
-		selector: JsObject = Json.obj(),
-		sort: JsObject = Json.obj("_id" -> 1))(f: Model => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
-		collection.flatMap { c =>
-			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
-			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)
-			enumerator.run(process)
-		}
-	}
-
-	def fold[A](
-		selector: JsObject = Json.obj(),
-		sort: JsObject = Json.obj("_id" -> 1),
-		state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
-		collection.flatMap { c =>
-			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
-			val process: Iteratee[Model, A] = Iteratee.fold(state)(f)
-			enumerator.run(process)
-		}
-	}
+	//	def foreach(
+	//		selector: JsObject = Json.obj(),
+	//		sort: JsObject = Json.obj("_id" -> 1))(f: Model => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
+	//		collection.flatMap { c =>
+	//			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
+	//			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)
+	//			enumerator.run(process)
+	//		}
+	//	}
+	//
+	//	def fold[A](
+	//		selector: JsObject = Json.obj(),
+	//		sort: JsObject = Json.obj("_id" -> 1),
+	//		state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
+	//		collection.flatMap { c =>
+	//			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
+	//			val process: Iteratee[Model, A] = Iteratee.fold(state)(f)
+	//			enumerator.run(process)
+	//		}
+	//	}
 
 	ensureIndexes()
 }

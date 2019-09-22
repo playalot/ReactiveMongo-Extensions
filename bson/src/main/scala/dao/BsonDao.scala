@@ -25,8 +25,8 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.commands.{ WriteConcern, WriteResult }
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.extensions.dsl.BsonDsl._
-import play.api.libs.iteratee.Iteratee
-import reactivemongo.play.iteratees.cursorProducer
+//import play.api.libs.iteratee.Iteratee
+//import reactivemongo.play.iteratees.cursorProducer
 import Handlers._
 import reactivemongo.api.Cursor.FailOnError
 
@@ -111,7 +111,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		sort: BSONDocument = BSONDocument("_id" -> 1),
 		page: Int,
 		pageSize: Int)(implicit ec: ExecutionContext): Future[List[Model]] = {
-		val from = (page - 1) * pageSize
+		val from = page * pageSize
 		collection.flatMap(_
 			.find(selector)
 			.sort(sort)
@@ -210,26 +210,26 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 		collection.flatMap(_.delete().one(BSONDocument.empty, None, None))
 	}
 
-	def foreach(
-		selector: BSONDocument = BSONDocument.empty,
-		sort: BSONDocument = BSONDocument("_id" -> 1))(f: Model => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
-		collection.flatMap { c =>
-			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
-			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)
-			enumerator.run(process)
-		}
-	}
-
-	def fold[A](
-		selector: BSONDocument = BSONDocument.empty,
-		sort: BSONDocument = BSONDocument("_id" -> 1),
-		state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
-		collection.flatMap { c =>
-			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
-			val process: Iteratee[Model, A] = Iteratee.fold(state)(f)
-			enumerator.run(process)
-		}
-	}
+	//	def foreach(
+	//		selector: BSONDocument = BSONDocument.empty,
+	//		sort: BSONDocument = BSONDocument("_id" -> 1))(f: Model => Unit)(implicit ec: ExecutionContext): Future[Unit] = {
+	//		collection.flatMap { c =>
+	//			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
+	//			val process: Iteratee[Model, Unit] = Iteratee.foreach(f)
+	//			enumerator.run(process)
+	//		}
+	//	}
+	//
+	//	def fold[A](
+	//		selector: BSONDocument = BSONDocument.empty,
+	//		sort: BSONDocument = BSONDocument("_id" -> 1),
+	//		state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A] = {
+	//		collection.flatMap { c =>
+	//			val enumerator = c.find(selector).sort(sort).cursor[Model]().enumerator()
+	//			val process: Iteratee[Model, A] = Iteratee.fold(state)(f)
+	//			enumerator.run(process)
+	//		}
+	//	}
 
 	ensureIndexes()
 }

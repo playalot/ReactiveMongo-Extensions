@@ -4,9 +4,9 @@ name := "reactivemongo-extensions"
 
 lazy val commonSettings = Seq(
   organization := "cn.playalot",
-  version := "0.18.0",
-  scalaVersion  := "2.12.8",
-  crossScalaVersions := Seq("2.12.8", "2.13.0"),
+  version := "0.18.6",
+  scalaVersion  := "2.13.1",
+  crossScalaVersions := Seq("2.12.8", "2.13.1"),
   crossVersion := CrossVersion.binary,
   scalacOptions := Seq(
     "-unchecked",
@@ -19,8 +19,8 @@ lazy val commonSettings = Seq(
     "-language:existentials",
     "-target:jvm-1.8"),
   resolvers ++= Seq(
-    "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/",
-    "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"),
+    Resolver.typesafeRepo("releases"),
+    Resolver.sonatypeRepo("snapshots")),
   javaOptions in Test ++= Seq("-Xmx512m", "-XX:MaxPermSize=512m"),
   testOptions in Test += Tests.Argument("-oDS"),
   parallelExecution in Test := true,

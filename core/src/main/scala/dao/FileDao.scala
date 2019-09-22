@@ -18,12 +18,11 @@ package reactivemongo.extensions.dao
 
 import java.io.OutputStream
 
-import scala.concurrent.{ Future, ExecutionContext }
-
-import play.api.libs.iteratee.Enumerator
+import scala.concurrent.{ ExecutionContext, Future }
 
 import reactivemongo.api.{ BSONSerializationPack, DBMetaCommands, Cursor, DB }
 import reactivemongo.api.gridfs.{
+	GridFS,
 	DefaultFileToSave,
 	ReadFile,
 	FileToSave,
@@ -32,8 +31,6 @@ import reactivemongo.api.gridfs.{
 }, Implicits.DefaultReadFileReader
 import reactivemongo.bson.{ BSONDocumentReader, BSONDocumentWriter, BSONValue }
 import reactivemongo.api.commands.WriteResult
-
-import reactivemongo.play.iteratees.GridFS
 
 import reactivemongo.extensions.dao.FileDao.ReadFileWrapper
 
@@ -68,19 +65,19 @@ abstract class FileDao[Id <% BSONValue: IdProducer, Structure](db: => DB with DB
 		gfs.remove(implicitly[BSONValue](id))
 
 	/** Saves the content provided by the given enumerator with the given metadata. */
-	def save(
-		enumerator: Enumerator[Array[Byte]],
-		file: FileToSave[BSONSerializationPack.type, BSONValue],
-		chunkSize: Int = 262144)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
-		gfs.save(enumerator, file, chunkSize)
-
-	/** Saves the content provided by the given enumerator with the given metadata. */
-	def save(
-		enumerator: Enumerator[Array[Byte]],
-		filename: Option[String],
-		contentType: String)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
-		gfs.save(enumerator, DefaultFileToSave(
-			filename = filename, contentType = Some(contentType)))
+	//	def save(
+	////		enumerator: Enumerator[Array[Byte]],
+	////		file: FileToSave[BSONSerializationPack.type, BSONValue],
+	////		chunkSize: Int = 262144)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
+	////		gfs.save(enumerator, file, chunkSize)
+	////
+	////	/** Saves the content provided by the given enumerator with the given metadata. */
+	////	def save(
+	////		enumerator: Enumerator[Array[Byte]],
+	////		filename: Option[String],
+	////		contentType: String)(implicit readFileReader: BSONDocumentReader[BSONReadFile], ec: ExecutionContext): Future[BSONReadFile] =
+	//		gfs.save(enumerator, DefaultFileToSave(
+	//			filename = filename, contentType = Some(contentType)))
 
 }
 
@@ -89,7 +86,7 @@ object FileDao {
 
 	case class ReadFileWrapper(gfs: GridFS[BSONSerializationPack.type], readFile: Future[Option[BSONReadFile]]) {
 
-		def enumerate(implicit ec: ExecutionContext): Future[Option[Enumerator[Array[Byte]]]] = readFile.map(_.map(gfs.enumerate(_)))
+		//		def enumerate(implicit ec: ExecutionContext): Future[Option[Enumerator[Array[Byte]]]] = readFile.map(_.map(gfs.enumerate(_)))
 
 		def read(out: OutputStream)(implicit ec: ExecutionContext): Future[Option[Unit]] = readFile.flatMap {
 			case Some(rf) => gfs.readToOutputStream(rf, out).map(Some(_))

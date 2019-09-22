@@ -162,7 +162,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 *  @param f Folding function.
 	 *  @tparam A Type of fold result.
 	 */
-	def fold[A](selector: Structure, sort: Structure, state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A]
+	//	def fold[A](selector: Structure, sort: Structure, state: A)(f: (A, Model) => A)(implicit ec: ExecutionContext): Future[A]
 
 	/** Iterates over the documents matching the given selector and applies the function `f`.
 	 *
@@ -170,7 +170,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
 	 *  @param sort Sorting document.
 	 *  @param f function to be applied.
 	 */
-	def foreach(selector: Structure, sort: Structure)(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit]
+	//	def foreach(selector: Structure, sort: Structure)(f: (Model) => Unit)(implicit ec: ExecutionContext): Future[Unit]
 
 	/** Inserts the given model. */
 	def insert(model: Model, writeConcern: WriteConcern)(implicit ec: ExecutionContext): Future[WriteResult]

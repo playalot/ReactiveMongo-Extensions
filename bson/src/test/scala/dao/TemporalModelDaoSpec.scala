@@ -25,9 +25,11 @@ import reactivemongo.extensions.model.TemporalModel
 import reactivemongo.extensions.dsl.BsonDsl._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class TemporalModelDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter

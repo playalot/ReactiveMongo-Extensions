@@ -27,9 +27,11 @@ import reactivemongo.api.gridfs.DefaultFileToSave
 import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class BsonFileDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter

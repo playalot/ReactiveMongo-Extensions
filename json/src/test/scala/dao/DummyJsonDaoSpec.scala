@@ -26,9 +26,11 @@ import reactivemongo.extensions.util.Logger
 import reactivemongo.extensions.Implicits._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class DummyJsonDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter
@@ -233,38 +235,38 @@ class DummyJsonDaoSpec
 		}
 	}
 
-//	it should "fold documents" in {
-//		val dummyModels = DummyModel.random(100)
-//		val totalAge = dummyModels.foldLeft(0) { (state, document) => state + document.age }
-//
-//		val futureResult = for {
-//			oldTotalAge <- dao.fold(state = 0) { (state, document) => state + document.age }
-//			insertResult <- dao.bulkInsert(dummyModels)
-//			totalAge <- dao.fold(state = -oldTotalAge) { (state, document) => state + document.age }
-//		} yield totalAge
-//
-//		whenReady(futureResult) { result =>
-//			result shouldBe totalAge
-//		}
-//	}
-//
-//	it should "iterate(foreach) over documents" in {
-//		val dummyModels = DummyModel.random(100)
-//		val totalAge = dummyModels.foldLeft(0) { (state, document) => state + document.age }
-//
-//		val futureResult = for {
-//			oldTotalAge <- dao.fold(state = 0) { (state, document) => state + document.age }
-//			insertResult <- dao.bulkInsert(dummyModels)
-//			totalAge <- {
-//				var total = -oldTotalAge // Just for the test case, please don't do this
-//				dao.foreach()(total += _.age).map(_ => total)
-//			}
-//		} yield totalAge
-//
-//		whenReady(futureResult) { result =>
-//			result shouldBe totalAge
-//		}
-//	}
+	//	it should "fold documents" in {
+	//		val dummyModels = DummyModel.random(100)
+	//		val totalAge = dummyModels.foldLeft(0) { (state, document) => state + document.age }
+	//
+	//		val futureResult = for {
+	//			oldTotalAge <- dao.fold(state = 0) { (state, document) => state + document.age }
+	//			insertResult <- dao.bulkInsert(dummyModels)
+	//			totalAge <- dao.fold(state = -oldTotalAge) { (state, document) => state + document.age }
+	//		} yield totalAge
+	//
+	//		whenReady(futureResult) { result =>
+	//			result shouldBe totalAge
+	//		}
+	//	}
+	//
+	//	it should "iterate(foreach) over documents" in {
+	//		val dummyModels = DummyModel.random(100)
+	//		val totalAge = dummyModels.foldLeft(0) { (state, document) => state + document.age }
+	//
+	//		val futureResult = for {
+	//			oldTotalAge <- dao.fold(state = 0) { (state, document) => state + document.age }
+	//			insertResult <- dao.bulkInsert(dummyModels)
+	//			totalAge <- {
+	//				var total = -oldTotalAge // Just for the test case, please don't do this
+	//				dao.foreach()(total += _.age).map(_ => total)
+	//			}
+	//		} yield totalAge
+	//
+	//		whenReady(futureResult) { result =>
+	//			result shouldBe totalAge
+	//		}
+	//	}
 
 	it should "save document" in {
 		val dummyModel = DummyModel(name = "foo", surname = "bar", age = 32)

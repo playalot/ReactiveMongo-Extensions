@@ -22,8 +22,10 @@ import reactivemongo.extensions.util.Logger
 import reactivemongo.extensions.dao.Handlers._
 import BsonDsl._
 import org.joda.time.DateTime
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-object BsonDslSpec extends FlatSpec with Matchers {
+object BsonDslSpec extends AnyFlatSpec with Matchers {
 	import reactivemongo.extensions.dao.Handlers._
 
 	"A BsonDsl" should "create complex document 1" in {

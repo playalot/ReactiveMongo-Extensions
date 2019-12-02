@@ -25,9 +25,11 @@ import reactivemongo.extensions.json.model.CustomIdModel
 import reactivemongo.extensions.json.dsl.JsonDsl._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class CustomIdJsonDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter

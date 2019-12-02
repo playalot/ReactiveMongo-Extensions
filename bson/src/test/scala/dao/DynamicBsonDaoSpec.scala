@@ -25,9 +25,11 @@ import reactivemongo.extensions.util.Logger
 import reactivemongo.extensions.Implicits._
 import scala.concurrent.{ Future, Await }
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class DynamicBsonDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter

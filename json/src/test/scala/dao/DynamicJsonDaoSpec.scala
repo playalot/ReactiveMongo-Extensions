@@ -36,9 +36,11 @@ import reactivemongo.extensions.Implicits._
 import scala.concurrent.{ Future, Await }
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class DynamicJsonDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter

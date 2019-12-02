@@ -21,6 +21,8 @@ import org.scalatest._
 import org.scalatest.matchers._
 
 import reactivemongo.bson._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /** The '''UntypedCriteriaSpec''' type unit tests the
  *  [[reactivemongo.extensions.dsl.criteria.Untyped]] EDSL functionality and
@@ -31,7 +33,7 @@ import reactivemongo.bson._
  *
  */
 class UntypedCriteriaSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers {
 	/// Class Imports
 	import Untyped._

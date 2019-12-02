@@ -27,9 +27,11 @@ import reactivemongo.api.gridfs.Implicits.DefaultReadFileReader
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class JsonFileDaoSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers
 	with ScalaFutures
 	with BeforeAndAfter
@@ -43,114 +45,114 @@ class JsonFileDaoSpec
 
 	val dao = new JsonFileDao[JsObject](MongoContext.syncDb, "json-files") {}
 
-//	"A JsonFileDao" should "save and remove file" in {
-//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
-//
-//		val result = for {
-//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
-//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
-//			findBefore <- dao.findById(id)
-//			remove <- dao.removeById(id)
-//			findAfter <- dao.findById(id)
-//		} yield (id, findBefore, findAfter)
-//
-//		whenReady(result) {
-//			case (id, findBefore, findAfter) =>
-//				import org.scalatest.OptionValues._
-//				BSONFormats.toJSON(findBefore.value.id) should be(id)
-//				findBefore.value.length should be(200007)
-//				findAfter should be('empty)
-//		}
-//	}
-//
-//	it should "find file by name" in {
-//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
-//
-//		val result = for {
-//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
-//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
-//			find <- dao.findOne(Json.obj("filename" -> save.filename))
-//			remove <- dao.removeById(id)
-//		} yield (id, find)
-//
-//		whenReady(result) {
-//			case (id, find) =>
-//				import org.scalatest.OptionValues._
-//				BSONFormats.toJSON(find.value.id) should be(id)
-//		}
-//	}
-//
-//	it should "enumerate one" in {
-//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
-//
-//		val length = Iteratee.fold(0) { (state: Int, bytes: Array[Byte]) =>
-//			state + bytes.length
-//		}
-//
-//		val result = for {
-//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
-//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
-//			enumerator <- dao.findOne(Json.obj("filename" -> save.filename)).enumerate
-//			len <- enumerator.get |>>> length
-//			remove <- dao.removeById(id)
-//		} yield len
-//
-//		whenReady(result) { length =>
-//			length shouldBe 200007
-//		}
-//	}
-//
-//	it should "enumerate by id" in {
-//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
-//
-//		val length = Iteratee.fold(0) { (state: Int, bytes: Array[Byte]) =>
-//			state + bytes.length
-//		}
-//
-//		val result = for {
-//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
-//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
-//			enumerator <- dao.findById(id).enumerate
-//			len <- enumerator.get |>>> length
-//			remove <- dao.removeById(id)
-//		} yield len
-//
-//		whenReady(result) { length =>
-//			length shouldBe 200007
-//		}
-//	}
-//
-//	it should "read one to outputstream" in {
-//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
-//		val out = new ByteArrayOutputStream
-//
-//		val result = for {
-//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
-//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
-//			read <- dao.findOne(Json.obj("filename" -> save.filename)).read(out)
-//			remove <- dao.removeById(id)
-//		} yield read
-//
-//		whenReady(result) { read =>
-//			read shouldBe 'defined
-//			out.size() shouldBe 200007
-//		}
-//	}
-//
-//	it should "read by id to outputstream" in {
-//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
-//		val out = new ByteArrayOutputStream
-//
-//		val result = for {
-//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
-//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
-//			read <- dao.findById(id).read(out)
-//			remove <- dao.removeById(id)
-//		} yield read
-//
-//		whenReady(result) { read =>
-//			read shouldBe 'defined
-//			out.size() shouldBe 200007
-//		}
-//	}
+	//	"A JsonFileDao" should "save and remove file" in {
+	//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
+	//
+	//		val result = for {
+	//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
+	//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
+	//			findBefore <- dao.findById(id)
+	//			remove <- dao.removeById(id)
+	//			findAfter <- dao.findById(id)
+	//		} yield (id, findBefore, findAfter)
+	//
+	//		whenReady(result) {
+	//			case (id, findBefore, findAfter) =>
+	//				import org.scalatest.OptionValues._
+	//				BSONFormats.toJSON(findBefore.value.id) should be(id)
+	//				findBefore.value.length should be(200007)
+	//				findAfter should be('empty)
+	//		}
+	//	}
+	//
+	//	it should "find file by name" in {
+	//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
+	//
+	//		val result = for {
+	//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
+	//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
+	//			find <- dao.findOne(Json.obj("filename" -> save.filename))
+	//			remove <- dao.removeById(id)
+	//		} yield (id, find)
+	//
+	//		whenReady(result) {
+	//			case (id, find) =>
+	//				import org.scalatest.OptionValues._
+	//				BSONFormats.toJSON(find.value.id) should be(id)
+	//		}
+	//	}
+	//
+	//	it should "enumerate one" in {
+	//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
+	//
+	//		val length = Iteratee.fold(0) { (state: Int, bytes: Array[Byte]) =>
+	//			state + bytes.length
+	//		}
+	//
+	//		val result = for {
+	//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
+	//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
+	//			enumerator <- dao.findOne(Json.obj("filename" -> save.filename)).enumerate
+	//			len <- enumerator.get |>>> length
+	//			remove <- dao.removeById(id)
+	//		} yield len
+	//
+	//		whenReady(result) { length =>
+	//			length shouldBe 200007
+	//		}
+	//	}
+	//
+	//	it should "enumerate by id" in {
+	//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
+	//
+	//		val length = Iteratee.fold(0) { (state: Int, bytes: Array[Byte]) =>
+	//			state + bytes.length
+	//		}
+	//
+	//		val result = for {
+	//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
+	//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
+	//			enumerator <- dao.findById(id).enumerate
+	//			len <- enumerator.get |>>> length
+	//			remove <- dao.removeById(id)
+	//		} yield len
+	//
+	//		whenReady(result) { length =>
+	//			length shouldBe 200007
+	//		}
+	//	}
+	//
+	//	it should "read one to outputstream" in {
+	//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
+	//		val out = new ByteArrayOutputStream
+	//
+	//		val result = for {
+	//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
+	//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
+	//			read <- dao.findOne(Json.obj("filename" -> save.filename)).read(out)
+	//			remove <- dao.removeById(id)
+	//		} yield read
+	//
+	//		whenReady(result) { read =>
+	//			read shouldBe 'defined
+	//			out.size() shouldBe 200007
+	//		}
+	//	}
+	//
+	//	it should "read by id to outputstream" in {
+	//		val enumerator = Enumerator.fromStream(getClass.getResourceAsStream("/whyfp90.pdf"))
+	//		val out = new ByteArrayOutputStream
+	//
+	//		val result = for {
+	//			save <- dao.save(enumerator, filename = Some("whyfp90.pdf"), contentType = "application/pdf")
+	//			id = BSONFormats.toJSON(save.id).asInstanceOf[JsObject]
+	//			read <- dao.findById(id).read(out)
+	//			remove <- dao.removeById(id)
+	//		} yield read
+	//
+	//		whenReady(result) { read =>
+	//			read shouldBe 'defined
+	//			out.size() shouldBe 200007
+	//		}
+	//	}
 }

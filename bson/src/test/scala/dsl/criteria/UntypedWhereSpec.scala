@@ -21,6 +21,8 @@ import org.scalatest._
 import org.scalatest.matchers._
 
 import reactivemongo.bson._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /** The '''UntypedWhereSpec''' type verifies the behaviour expected of the
  *  `where` method in the [[reactivemongo.extensions.dsl.criteria.Untyped]]
@@ -30,7 +32,7 @@ import reactivemongo.bson._
  *
  */
 class UntypedWhereSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers {
 	/// Class Imports
 	import Untyped._

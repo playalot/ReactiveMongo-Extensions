@@ -24,8 +24,10 @@ import reactivemongo.extensions.dao.MongoContext
 import reactivemongo.extensions.json.dao.{ PersonJsonDao, EventJsonDao }
 import reactivemongo.extensions.Implicits._
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class JsonFixturesSpec extends FlatSpec with Matchers with ScalaFutures with BeforeAndAfter {
+class JsonFixturesSpec extends AnyFlatSpec with Matchers with ScalaFutures with BeforeAndAfter {
 
 	override implicit def patienceConfig = PatienceConfig(timeout = Span(20, Seconds), interval = Span(1, Seconds))
 

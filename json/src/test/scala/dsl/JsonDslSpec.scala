@@ -24,8 +24,10 @@ import reactivemongo.play.json.BSONFormats._
 import JsonDsl._
 import org.joda.time.DateTime
 import reactivemongo.extensions.json.joda.JodaFormats._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class JsonDslSpec extends FlatSpec with Matchers {
+class JsonDslSpec extends AnyFlatSpec with Matchers {
 
 	"A JsonDsl" should "create document" in {
 		val dsl = $doc("name" $eq "foo", "surname" $eq "bar", "age" $eq 32)

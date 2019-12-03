@@ -28,8 +28,10 @@ import reactivemongo.extensions.dao.{
 }, Handlers._ // extension BSON handler
 import reactivemongo.extensions.Implicits.FutureOption // ~
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class BsonFixturesSpec extends FlatSpec with Matchers with ScalaFutures with BeforeAndAfter {
+class BsonFixturesSpec extends AnyFlatSpec with Matchers with ScalaFutures with BeforeAndAfter {
 	override implicit def patienceConfig = PatienceConfig(timeout = Span(20, Seconds), interval = Span(1, Seconds))
 
 	val db = MongoContext.randomDb

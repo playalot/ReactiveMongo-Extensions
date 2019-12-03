@@ -18,10 +18,11 @@
 package reactivemongo.extensions.samples.dsl.criteria
 
 import org.scalatest._
-import org.scalatest.junit.JUnitRunner
 
 import reactivemongo.bson._
 import reactivemongo.extensions.dsl.criteria._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 trait Company {
 	val name: String;
@@ -37,7 +38,7 @@ case class Person(val firstName: String, val lastName: String, age: Int)
  *
  */
 class TypedCriteriaSpec
-	extends FlatSpec
+	extends AnyFlatSpec
 	with Matchers {
 	/// Class Imports
 	import Typed._

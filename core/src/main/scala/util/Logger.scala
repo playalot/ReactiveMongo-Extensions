@@ -51,7 +51,7 @@ trait LoggerLike {
 	 *
 	 *  @param message the message to log
 	 */
-	def trace(message: => String) {
+	def trace(message: => String) = {
 		if (logger.isTraceEnabled) logger.trace(message)
 	}
 
@@ -60,7 +60,7 @@ trait LoggerLike {
 	 *  @param message the message to log
 	 *  @param error the associated exception
 	 */
-	def trace(message: => String, error: => Throwable) {
+	def trace(message: => String, error: => Throwable) = {
 		if (logger.isTraceEnabled) logger.trace(message, error)
 	}
 
@@ -68,7 +68,7 @@ trait LoggerLike {
 	 *
 	 *  @param message the message to log
 	 */
-	def debug(message: => String) {
+	def debug(message: => String) = {
 		if (logger.isDebugEnabled) logger.debug(message)
 	}
 
@@ -77,7 +77,7 @@ trait LoggerLike {
 	 *  @param message the message to log
 	 *  @param error the associated exception
 	 */
-	def debug(message: => String, error: => Throwable) {
+	def debug(message: => String, error: => Throwable) = {
 		if (logger.isDebugEnabled) logger.debug(message, error)
 	}
 
@@ -85,7 +85,7 @@ trait LoggerLike {
 	 *
 	 *  @param message the message to log
 	 */
-	def info(message: => String) {
+	def info(message: => String) = {
 		if (logger.isInfoEnabled) logger.info(message)
 	}
 
@@ -94,7 +94,7 @@ trait LoggerLike {
 	 *  @param message the message to log
 	 *  @param error the associated exception
 	 */
-	def info(message: => String, error: => Throwable) {
+	def info(message: => String, error: => Throwable) = {
 		if (logger.isInfoEnabled) logger.info(message, error)
 	}
 
@@ -102,7 +102,7 @@ trait LoggerLike {
 	 *
 	 *  @param message the message to log
 	 */
-	def warn(message: => String) {
+	def warn(message: => String) = {
 		if (logger.isWarnEnabled) logger.warn(message)
 	}
 
@@ -111,7 +111,7 @@ trait LoggerLike {
 	 *  @param message the message to log
 	 *  @param error the associated exception
 	 */
-	def warn(message: => String, error: => Throwable) {
+	def warn(message: => String, error: => Throwable) = {
 		if (logger.isWarnEnabled) logger.warn(message, error)
 	}
 
@@ -119,7 +119,7 @@ trait LoggerLike {
 	 *
 	 *  @param message the message to log
 	 */
-	def error(message: => String) {
+	def error(message: => String) = {
 		if (logger.isErrorEnabled) logger.error(message)
 	}
 
@@ -128,7 +128,7 @@ trait LoggerLike {
 	 *  @param message the message to log
 	 *  @param error the associated exception
 	 */
-	def error(message: => String, error: => Throwable) {
+	def error(message: => String, error: => Throwable) = {
 		if (logger.isErrorEnabled) logger.error(message, error)
 	}
 

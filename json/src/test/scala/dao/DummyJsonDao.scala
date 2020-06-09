@@ -18,14 +18,16 @@ package reactivemongo.extensions.json.dao
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.json.model.DummyModel
+import reactivemongo.extensions.json.model.DummyModel.dummyModelFormat
 import reactivemongo.extensions.dao.MongoContext
-import reactivemongo.api.indexes.{ Index, IndexType }
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.play.json.BSONFormats._
+import reactivemongo.api.indexes.IndexType
+import reactivemongo.api.bson.BSONObjectID
 import reactivemongo.extensions.util.Misc.UUID
+import reactivemongo.play.json.compat.bson2json._
 
-class DummyJsonDao extends {
-	override val autoIndexes = Seq(
-		Index(Seq("name" -> IndexType.Ascending), unique = true, background = true),
-		Index(Seq("age" -> IndexType.Ascending), background = true))
-} with JsonDao[DummyModel, BSONObjectID](MongoContext.db, "dummy-" + UUID())
+class DummyJsonDao extends JsonDao[DummyModel, BSONObjectID](MongoContext.db, "dummy-" + UUID()) {
+  override val autoIndexes = Seq(
+    index(Seq("name" -> IndexType.Ascending), name = Some("name_idx"), unique = true),
+    index(Seq("age" -> IndexType.Ascending), name = Some("age_idx"))
+  )
+}

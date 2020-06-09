@@ -19,105 +19,101 @@ package reactivemongo.extensions.dao
 import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.SpanSugar._
-import reactivemongo.bson._
-import reactivemongo.bson.Macros.Options.Verbose
+import reactivemongo.api.bson._
 import reactivemongo.extensions.model.CustomIdModel
 import reactivemongo.extensions.dsl.BsonDsl._
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class CustomIdBsonDaoSpec
-	extends AnyFlatSpec
-	with Matchers
-	with ScalaFutures
-	with BeforeAndAfter
-	with OneInstancePerTest {
+    extends AnyFlatSpec
+    with Matchers
+    with ScalaFutures
+    with BeforeAndAfter
+    with OneInstancePerTest {
 
-	override implicit def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
+  implicit override def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
 
-	val dao = new CustomIdBsonDao
+  val dao = new CustomIdBsonDao
 
-	after {
-		dao.dropSync()
-	}
+  after {
+    dao.dropSync()
+  }
 
-	"A CustomIdBsonDao" should "find document by id" in {
-		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
+  "A CustomIdBsonDao" should "find document by id" in {
+    val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
 
-		val futureResult = for {
-			insertResult <- dao.insert(customIdModel)
-			maybeCustomIdModel <- dao.findById(customIdModel._id)
-		} yield maybeCustomIdModel
+    val futureResult = for {
+      insertResult       <- dao.insert(customIdModel)
+      maybeCustomIdModel <- dao.findById(customIdModel._id)
+    } yield maybeCustomIdModel
 
-		whenReady(futureResult) { maybeCustomIdModel =>
-			maybeCustomIdModel should be('defined)
-			maybeCustomIdModel.get._id shouldBe customIdModel._id
-			maybeCustomIdModel.get.age shouldBe customIdModel.age
-		}
-	}
+    whenReady(futureResult) { maybeCustomIdModel =>
+      maybeCustomIdModel should be(Symbol("defined"))
+      maybeCustomIdModel.get._id shouldBe customIdModel._id
+      maybeCustomIdModel.get.age shouldBe customIdModel.age
+    }
+  }
 
-	it should "find documents by ids" in {
-		val customIdModels = CustomIdModel.random(100)
+  it should "find documents by ids" in {
+    val customIdModels = CustomIdModel.random(100)
 
-		val futureResult = for {
-			insertResult <- dao.bulkInsert(customIdModels)
-			models <- dao.findByIds(customIdModels.drop(5).map(_._id): _*)
-		} yield models
+    val futureResult = for {
+      insertResult <- dao.bulkInsert(customIdModels)
+      models       <- dao.findByIds(customIdModels.drop(5).map(_._id): _*)
+    } yield models
 
-		whenReady(futureResult) { models =>
-			models should have size 95
-		}
-	}
+    whenReady(futureResult) { models => models should have size 95 }
+  }
 
-	it should "update document by id" in {
-		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
-		val update = $set("age" -> 64)
+  it should "update document by id" in {
+    val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
+    val update        = $set("age" -> 64)
 
-		val futureResult = for {
-			insert <- dao.insert(customIdModel)
-			update <- dao.updateById(customIdModel._id, update)
-			updatedMaybeCustomIdModel <- dao.findById(customIdModel._id)
-		} yield updatedMaybeCustomIdModel
+    val futureResult = for {
+      insert                    <- dao.insert(customIdModel)
+      update                    <- dao.updateById(customIdModel._id, update)
+      updatedMaybeCustomIdModel <- dao.findById(customIdModel._id)
+    } yield updatedMaybeCustomIdModel
 
-		whenReady(futureResult) { updatedMaybeCustomIdModel =>
-			updatedMaybeCustomIdModel should be('defined)
-			val updatedCustomIdModel = updatedMaybeCustomIdModel.get
-			updatedCustomIdModel._id shouldBe customIdModel._id
-			updatedCustomIdModel.age shouldBe 64
-		}
-	}
+    whenReady(futureResult) { updatedMaybeCustomIdModel =>
+      updatedMaybeCustomIdModel should be(Symbol("defined"))
+      val updatedCustomIdModel = updatedMaybeCustomIdModel.get
+      updatedCustomIdModel._id shouldBe customIdModel._id
+      updatedCustomIdModel.age shouldBe 64
+    }
+  }
 
-	it should "update the whole document by id" in {
-		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
-		val update = customIdModel.copy(age = 64)
+  it should "update the whole document by id" in {
+    val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
+    val update        = customIdModel.copy(age = 64)
 
-		val futureResult = for {
-			insert <- dao.insert(customIdModel)
-			update <- dao.updateById(customIdModel._id, update)
-			updatedMaybeCustomIdModel <- dao.findById(customIdModel._id)
-		} yield updatedMaybeCustomIdModel
+    val futureResult = for {
+      insert                    <- dao.insert(customIdModel)
+      update                    <- dao.updateById(customIdModel._id, update)
+      updatedMaybeCustomIdModel <- dao.findById(customIdModel._id)
+    } yield updatedMaybeCustomIdModel
 
-		whenReady(futureResult) { updatedMaybeCustomIdModel =>
-			updatedMaybeCustomIdModel should be('defined)
-			val updatedCustomIdModel = updatedMaybeCustomIdModel.get
-			updatedCustomIdModel._id shouldBe customIdModel._id
-			updatedCustomIdModel.age shouldBe 64
-		}
-	}
+    whenReady(futureResult) { updatedMaybeCustomIdModel =>
+      updatedMaybeCustomIdModel should be(Symbol("defined"))
+      val updatedCustomIdModel = updatedMaybeCustomIdModel.get
+      updatedCustomIdModel._id shouldBe customIdModel._id
+      updatedCustomIdModel.age shouldBe 64
+    }
+  }
 
-	it should "ensure indexes" in {
-		val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
-		val futureIndexes = for {
-			_ <- dao.save(customIdModel._id, customIdModel)
-			_ <- dao.ensureIndexes()
-			indexes <- dao.listIndexes()
-		} yield indexes
+  it should "ensure indexes" in {
+    val customIdModel = CustomIdModel(name = "foo", surname = "bar", age = 32)
+    val futureIndexes = for {
+      _       <- dao.save(customIdModel._id, customIdModel)
+      _       <- dao.ensureIndexes()
+      indexes <- dao.listIndexes()
+    } yield indexes
 
-		whenReady(futureIndexes) { indexes =>
-			indexes should have size 3 // including _id
-		}
-	}
+    whenReady(futureIndexes) { indexes =>
+      indexes should have size 3 // including _id
+    }
+  }
 
 }

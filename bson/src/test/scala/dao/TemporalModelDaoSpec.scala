@@ -19,46 +19,42 @@ package reactivemongo.extensions.dao
 import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.SpanSugar._
-import reactivemongo.bson._
-import reactivemongo.bson.Macros.Options.Verbose
 import reactivemongo.extensions.model.TemporalModel
-import reactivemongo.extensions.dsl.BsonDsl._
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class TemporalModelDaoSpec
-	extends AnyFlatSpec
-	with Matchers
-	with ScalaFutures
-	with BeforeAndAfter
-	with OneInstancePerTest {
+    extends AnyFlatSpec
+    with Matchers
+    with ScalaFutures
+    with BeforeAndAfter
+    with OneInstancePerTest {
 
-	override implicit def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
+  implicit override def patienceConfig = PatienceConfig(timeout = 20 seconds, interval = 1 seconds)
 
-	val dao = new TemporalModelDao
+  val dao = new TemporalModelDao
 
-	after {
-		dao.dropSync()
-	}
+  after {
+    dao.dropSync()
+  }
 
-	"A TemporalModelDao" should "update updateAt" in {
-		val temporalModel = TemporalModel(name = "foo", surname = "bar")
+  "A TemporalModelDao" should "update updateAt" in {
+    val temporalModel = TemporalModel(name = "foo", surname = "bar")
 
-		val futureResult = for {
-			insertResult <- dao.insert(temporalModel)
-			maybeTemporalModel <- dao.findById(temporalModel._id)
-		} yield maybeTemporalModel
+    val futureResult = for {
+      _                  <- dao.insert(temporalModel)
+      maybeTemporalModel <- dao.findById(temporalModel._id)
+    } yield maybeTemporalModel
 
-		whenReady(futureResult) { maybeTemporalModel =>
-			maybeTemporalModel should be('defined)
-			maybeTemporalModel.get._id shouldBe temporalModel._id
-			maybeTemporalModel.get.name shouldBe temporalModel.name
-			maybeTemporalModel.get.surname shouldBe temporalModel.surname
-			maybeTemporalModel.get.createdAt shouldBe temporalModel.createdAt
-			maybeTemporalModel.get.updatedAt.isAfter(temporalModel.updatedAt) shouldBe true
-		}
-	}
+    whenReady(futureResult) { maybeTemporalModel =>
+      maybeTemporalModel should be(Symbol("defined"))
+      maybeTemporalModel.get._id shouldBe temporalModel._id
+      maybeTemporalModel.get.name shouldBe temporalModel.name
+      maybeTemporalModel.get.surname shouldBe temporalModel.surname
+      maybeTemporalModel.get.createdAt shouldBe temporalModel.createdAt
+      maybeTemporalModel.get.updatedAt.isAfter(temporalModel.updatedAt) shouldBe true
+    }
+  }
 
 }

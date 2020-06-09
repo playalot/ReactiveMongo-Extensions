@@ -16,31 +16,30 @@
 
 package reactivemongo.extensions.fixtures
 
-import scala.concurrent.{ ExecutionContext, Future }
 import play.api.libs.json.JsObject
-import reactivemongo.bson.BSONDocument
 import reactivemongo.api.DefaultDB
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.api.bson.compat._
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.play.json.BSONFormats
+import reactivemongo.play.json.compat.ExtendedJsonConverters
+
+import scala.concurrent.{ ExecutionContext, Future }
 
 class BsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) extends Fixtures[BSONDocument] {
-	def map(document: JsObject): BSONDocument =
-		BSONFormats.BSONDocumentFormat.reads(document).get
+  def map(document: JsObject): BSONDocument = ExtendedJsonConverters.toDocument(document)
 
-	def bulkInsert(collectionName: String, documents: Stream[BSONDocument]): Future[Int] = db.flatMap(_.collection[BSONCollection](
-		collectionName).insert(ordered = true).many(documents).map(_.n))
+  def bulkInsert(collectionName: String, documents: LazyList[BSONDocument]): Future[Int] =
+    db.flatMap(_.collection[BSONCollection](collectionName).insert(ordered = true).many(documents).map(_.n))
 
-	def removeAll(collectionName: String): Future[WriteResult] =
-		db.flatMap(_.collection[BSONCollection](collectionName).delete.one(BSONDocument.empty))
+  def removeAll(collectionName: String): Future[WriteResult] =
+    db.flatMap(_.collection[BSONCollection](collectionName).delete.one(BSONDocument.empty))
 
-	def drop(collectionName: String): Future[Boolean] =
-		db.flatMap(_.collection[BSONCollection](collectionName).drop(failIfNotFound = true))
+  def drop(collectionName: String): Future[Boolean] =
+    db.flatMap(_.collection[BSONCollection](collectionName).drop(failIfNotFound = true))
 
 }
 
 object BsonFixtures {
-	def apply(db: Future[DefaultDB])(implicit ec: ExecutionContext): BsonFixtures =
-		new BsonFixtures(db)
+  def apply(db: Future[DefaultDB])(implicit ec: ExecutionContext): BsonFixtures = new BsonFixtures(db)
 }
-

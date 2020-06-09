@@ -29,14 +29,14 @@ import ch.qos.logback.classic.pattern.ClassicConverter
  */
 class ColoredLevel extends ClassicConverter {
 
-	def convert(event: ILoggingEvent): String = {
-		event.getLevel match {
-			case Level.TRACE => "[" + Colors.blue("trace") + "]"
-			case Level.DEBUG => "[" + Colors.cyan("debug") + "]"
-			case Level.INFO => "[" + Colors.white("info") + "]"
-			case Level.WARN => "[" + Colors.yellow("warn") + "]"
-			case Level.ERROR => "[" + Colors.red("error") + "]"
-		}
-	}
+  def convert(event: ILoggingEvent): String = {
+    event.getLevel match {
+      case Level.TRACE => "[" + Colors.blue("trace") + "]"
+      case Level.DEBUG => "[" + Colors.cyan("debug") + "]"
+      case Level.INFO  => "[" + Colors.white("info") + "]"
+      case Level.WARN  => "[" + Colors.yellow("warn") + "]"
+      case Level.ERROR => "[" + Colors.red("error") + "]"
+    }
+  }
 
 }

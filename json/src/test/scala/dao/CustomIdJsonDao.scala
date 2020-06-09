@@ -18,14 +18,15 @@ package reactivemongo.extensions.json.dao
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.json.model.CustomIdModel
+import reactivemongo.extensions.json.model.CustomIdModel.customIdModelFormat
 import reactivemongo.extensions.dao.MongoContext
-import reactivemongo.api.indexes.{ Index, IndexType }
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.extensions.util.Misc.UUID
 
-class CustomIdJsonDao
-	extends JsonDao[CustomIdModel, String](MongoContext.db, "dummy-" + UUID()) {
+class CustomIdJsonDao extends JsonDao[CustomIdModel, String](MongoContext.db, "dummy-" + UUID()) {
 
-	override def autoIndexes = Seq(
-		Index(Seq("name" -> IndexType.Ascending), unique = true, background = true),
-		Index(Seq("age" -> IndexType.Ascending), background = true))
+  override val autoIndexes = Seq(
+    index(Seq("name" -> IndexType.Ascending), name = Some("name_idx"), unique = true),
+    index(Seq("age" -> IndexType.Ascending), name = Some("age_idx"))
+  )
 }

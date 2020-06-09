@@ -67,11 +67,11 @@ package reactivemongo.extensions.dao
  *  }}}
  */
 trait LifeCycle[Model, ID] {
-	def prePersist(model: Model): Model
-	def postPersist(model: Model): Unit
-	def preRemove(id: ID): Unit
-	def postRemove(id: ID): Unit
-	def ensuredIndexes(): Unit
+  def prePersist(model: Model): Model
+  def postPersist(model: Model): Unit
+  def preRemove(id: ID): Unit
+  def postRemove(id: ID): Unit
+  def ensuredIndexes(): Unit
 }
 
 /** This is the default life cycle for all models.
@@ -79,9 +79,9 @@ trait LifeCycle[Model, ID] {
  *  Basically it does not perform any actions after life cyle events nor does any transformations to model instances.
  */
 class ReflexiveLifeCycle[Model, ID] extends LifeCycle[Model, ID] {
-	def prePersist(model: Model): Model = model
-	def postPersist(model: Model): Unit = {}
-	def preRemove(id: ID): Unit = {}
-	def postRemove(id: ID): Unit = {}
-	def ensuredIndexes(): Unit = {}
+  def prePersist(model: Model): Model = model
+  def postPersist(model: Model): Unit = {}
+  def preRemove(id: ID): Unit = {}
+  def postRemove(id: ID): Unit = {}
+  def ensuredIndexes(): Unit = {}
 }

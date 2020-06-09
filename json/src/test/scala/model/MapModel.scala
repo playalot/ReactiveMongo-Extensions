@@ -16,18 +16,14 @@
 
 package reactivemongo.extensions.json.model
 
-import reactivemongo.bson._
-import reactivemongo.play.json.BSONFormats._
+import reactivemongo.api.bson._
+import reactivemongo.play.json.compat.bson2json._
 import play.api.libs.json.Json
 
-case class MapModel(
-		_id: BSONObjectID = BSONObjectID.generate,
-		data: Map[String, Int])
+case class MapModel(_id: BSONObjectID = BSONObjectID.generate, data: Map[String, Int])
 
 object MapModel {
-	implicit val customIdModelFormat = Json.format[MapModel]
+  implicit val mapModelFormat = Json.format[MapModel]
 
-	def random(n: Int): Seq[MapModel] = 1 to n map { index =>
-		MapModel(data = Map("count" -> n))
-	}
+  def random(n: Int): Seq[MapModel] = (1 to n).map { index => MapModel(data = Map("count" -> n)) }
 }

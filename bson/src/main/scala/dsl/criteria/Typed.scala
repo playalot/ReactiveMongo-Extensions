@@ -19,7 +19,7 @@ package reactivemongo.extensions.dsl.criteria
 
 import scala.language.dynamics
 import scala.language.experimental.macros
-import scala.reflect.macros.Context
+import scala.reflect.macros.whitebox.Context
 import scala.reflect.runtime.universe._
 
 /** The '''Typed''' `object` provides the ability to ''lift'' an arbitrary type
@@ -31,48 +31,41 @@ import scala.reflect.runtime.universe._
  *
  */
 object Typed {
-	/// Class Types
-	class PropertyAccess[T] extends Dynamic {
-		def selectDynamic(property: String): Any = macro PropertyAccess.select[T]
-	}
+  /// Class Types
+  class PropertyAccess[T] extends Dynamic {
+    def selectDynamic(property: String): Any = macro PropertyAccess.select[T]
+  }
 
-	object PropertyAccess {
-		def select[T: c.WeakTypeTag](c: Context)(property: c.Expr[String]) = {
-			import c.universe._
-			import c.universe.typeOf
-			import c.mirror._
+  object PropertyAccess {
+    def select[T: c.WeakTypeTag](c: Context)(property: c.Expr[String]) = {
+      import c.universe._
+      import c.universe.typeOf
+      import c.mirror._
 
-			val tree = (c.prefix.tree, property.tree) match {
-				case (
-					TypeApply(
-						Select(_, _),
-						List(parentType)
-						),
-					st @ Literal(Constant(name: String))
-					) =>
-					val accessor = parentType.tpe.member(TermName(name)) orElse {
-						c.abort(
-							c.enclosingPosition,
-							s"$name is not a member of ${parentType.tpe}")
-					}
+      val tree = (c.prefix.tree, property.tree) match {
+        case (
+              TypeApply(
+                Select(_, _),
+                List(parentType)
+              ),
+              st @ Literal(Constant(name: String))
+            ) =>
+          val accessor = parentType.tpe.member(TermName(name)).orElse {
+            c.abort(c.enclosingPosition, s"$name is not a member of ${parentType.tpe}")
+          }
 
-					Apply(
-						Select(
-							New(TypeTree(typeOf[Term[Any]])),
-							termNames.CONSTRUCTOR),
-						List(st));
+          Apply(Select(New(TypeTree(typeOf[Term[Any]])), termNames.CONSTRUCTOR), List(st));
 
-				case other =>
-					c.abort(c.enclosingPosition, s"only property access is supported: $other");
-			}
+        case other =>
+          c.abort(c.enclosingPosition, s"only property access is supported: $other");
+      }
 
-			c.Expr[Any](tree)
-		}
-	}
+      c.Expr[Any](tree)
+    }
+  }
 
-	/** The criteria method produces a type which enforces the existence of
-	 *  property names within ''T''.
-	 */
-	def criteria[T] = new PropertyAccess[T]
+  /** The criteria method produces a type which enforces the existence of
+   *  property names within ''T''.
+   */
+  def criteria[T] = new PropertyAccess[T]
 }
-

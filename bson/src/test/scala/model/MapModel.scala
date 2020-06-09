@@ -16,18 +16,12 @@
 
 package reactivemongo.extensions.model
 
-import reactivemongo.bson._
-import reactivemongo.extensions.dao.Handlers._
-import play.api.libs.json.Json
+import reactivemongo.api.bson._
 
-case class MapModel(
-		_id: BSONObjectID = BSONObjectID.generate,
-		data: Map[String, Int])
+case class MapModel(_id: BSONObjectID = BSONObjectID.generate, data: Map[String, Int])
 
 object MapModel {
-	implicit val customIdModelHandler = Macros.handler[MapModel]
+  implicit val customIdModelHandler = Macros.handler[MapModel]
 
-	def random(n: Int): Seq[MapModel] = 1 to n map { index =>
-		MapModel(data = Map("count" -> n))
-	}
+  def random(n: Int): Seq[MapModel] = (1 to n).map { index => MapModel(data = Map("count" -> n)) }
 }

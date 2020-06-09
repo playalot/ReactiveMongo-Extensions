@@ -18,13 +18,11 @@ package reactivemongo.extensions.dao
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.model.MapModel
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.bson.DefaultBSONHandlers._
+import reactivemongo.api.bson.BSONObjectID
 import reactivemongo.api.commands.WriteConcern
 import reactivemongo.extensions.util.Misc.UUID
 
-class MapModelBsonDao extends BsonDao[MapModel, BSONObjectID](
-	MongoContext.db, "dummy-" + UUID()) {
+class MapModelBsonDao extends BsonDao[MapModel, BSONObjectID](MongoContext.db, "dummy-" + UUID()) {
 
-	override def defaultWriteConcern = WriteConcern.Default.copy(j = true)
+  override def defaultWriteConcern = WriteConcern.Default.copy(j = true)
 }

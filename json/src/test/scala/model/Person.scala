@@ -18,14 +18,8 @@ package reactivemongo.extensions.json.model
 
 import play.api.libs.json.Json
 
-case class Person(
-		_id: String,
-		name: String,
-		surname: String,
-		fullname: String,
-		age: Int,
-		country: String)
+case class Person(_id: String, name: String, surname: String, fullname: String, age: Int, country: String)
 
 object Person {
-	implicit val personFormat = Json.format[Person]
+  implicit val personFormat = Json.format[Person]
 }

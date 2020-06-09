@@ -197,7 +197,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
   }
 
   def count(selector: JsObject = Json.obj())(implicit ec: ExecutionContext): Future[Int] =
-    collection.flatMap(_.count(Some(selector), None, 0, None, ReadConcern.Majority)).map(_.toInt)
+    collection.flatMap(_.count(Some(selector), None, 0, None, ReadConcern.Available)).map(_.toInt)
 
   def drop()(implicit ec: ExecutionContext): Future[Boolean] = collection.flatMap(_.drop(failIfNotFound = true))
 

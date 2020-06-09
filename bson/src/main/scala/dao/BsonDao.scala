@@ -212,7 +212,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
   }
 
   def count(selector: BSONDocument = BSONDocument.empty)(implicit ec: ExecutionContext): Future[Int] =
-    collection.flatMap(_.count(Some(selector), None, 0, None, ReadConcern.Majority)).map(_.toInt)
+    collection.flatMap(_.count(Some(selector), None, 0, None, ReadConcern.Available)).map(_.toInt)
 
   def drop()(implicit ec: ExecutionContext): Future[Boolean] = collection.flatMap(_.drop(failIfNotFound = true))
 

@@ -57,7 +57,28 @@ object Handlers {
       Success(BSONDocument(elements))
     }
 
-		def read(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
+  implicit object BSONIntegerHandler extends BSONReader[Int] {
+    def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
+      case Some(num) => num.toInt
+      case _ =>
+        bson match {
+          case doc @ BSONDocument(_) =>
+            doc.asInstanceOf[BSONDocument].getAsTry[BSONNumberLike]("$int").map(_.toInt).get
+        }
+    }
+  }
+
+  implicit object BSONLongHandler extends BSONReader[Long] {
+    def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
+      case Some(num) => num.toLong
+      case _ =>
+        bson match {
+          case doc @ BSONDocument(_) =>
+            doc.asInstanceOf[BSONDocument].getAsTry[BSONNumberLike]("$long").map(_.toLong).get
+        }
+    }
+  }
+
   implicit object BSONDoubleHandler extends BSONReader[Double] {
     def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
       case Some(num) => num.toDouble

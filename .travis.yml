@@ -3,7 +3,7 @@ dist: trusty
 sudo: true
 script: sbt ++$TRAVIS_SCALA_VERSION 'test'
 scala:
-  - 2.13.1
+  - 2.13.2
 jdk:
   - oraclejdk9
 services: mongodb

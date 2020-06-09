@@ -2,12 +2,9 @@
 
 The goal of *ReactiveMongo Extensions* is to provide all the necessary tools for ReactiveMongo other than the core functionality.
 
-> **Since ReactiveMongo 0.11, the useful functions are available directly in the [driver](../ReactiveMongo), so these extensions are not updated, and it's recommended to directly use the driver.**
-
-
 [![Build Status](https://travis-ci.org/playalot/ReactiveMongo-Extensions.svg?branch=master)](https://travis-ci.org/playalot/ReactiveMongo-Extensions)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.12/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.playalot/reactivemongo-extensions-core_2.13/)
 
 ## Introduction
 
@@ -24,7 +21,7 @@ You will need to define a DAO for each of your models(case classes).
 Below is a sample model.
 
 ```scala
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 import reactivemongo.extensions.dao.Handlers._
 
 case class Person(
@@ -42,8 +39,7 @@ To define a BsonDao for the Person model you just need to extend BsonDao.
 
 ```scala
 import reactivemongo.api.{ MongoDriver, DB }
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.bson.DefaultBSONHandlers._
+import reactivemongo.api.bson._
 import reactivemongo.extensions.dao.BsonDao
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -166,8 +162,8 @@ ReactiveMongo Extensions support auto indexes which ensures indexes on DAO load.
 ```scala
 object PersonDao extends {
   override val autoIndexes = Seq(
-    Index(Seq("name" -> IndexType.Ascending), unique = true, background = true),
-    Index(Seq("age" -> IndexType.Ascending), background = true)
+    index(Seq("name" -> IndexType.Ascending), unique = true, background = true),
+    index(Seq("age" -> IndexType.Ascending), background = true)
   )
 } with BsonDao[Person, BSONObjectID](MongoContext.db, "persons")
 
@@ -276,13 +272,13 @@ Current version matrix is below:
 
 | reactivemongo-extensions-bson    | Target ReactiveMongo version |
 |----------------------------------|------------------------------|
-| 0.16.6                           | 0.16.6                       |
+| 0.20.11                          | 0.20.11                      |
 
 | reactivemongo-extensions-json    | Target Play-ReactiveMongo version |
 |----------------------------------|-----------------------------------|
-| 0.16.6                           | 0.16.6                            |
+| 0.20.11                          | 0.20.11                           |
 
-Note: Only available for scala 2.12.
+Note: Only available for scala 2.13.
 
 If you use SBT, you just have to edit build.sbt and add the following:
 
@@ -290,7 +286,7 @@ If you use SBT, you just have to edit build.sbt and add the following:
 resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 libraryDependencies ++= Seq(
-  "cn.playalot" %% "reactivemongo-extensions-bson" % "0.16.6"
+  "cn.playalot" %% "reactivemongo-extensions-bson" % "0.20.11"
 )
 ```
 

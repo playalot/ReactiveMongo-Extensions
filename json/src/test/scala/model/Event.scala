@@ -16,20 +16,13 @@
 
 package reactivemongo.extensions.json.model
 
-import reactivemongo.bson._
-import reactivemongo.extensions.dao.Handlers._
 import play.api.libs.json.Json
-import reactivemongo.play.json.BSONFormats._
 
-case class Event(
-		_id: String,
-		title: String,
-		organizer: String,
-		location: Location)
+case class Event(_id: String, title: String, organizer: String, location: Location)
 
 case class Location(city: String, place: String)
 
 object Event {
-	implicit val locationFormat = Json.format[Location]
-	implicit val eventFormat = Json.format[Event]
+  implicit val locationFormat = Json.format[Location]
+  implicit val eventFormat    = Json.format[Event]
 }

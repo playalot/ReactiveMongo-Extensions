@@ -17,74 +17,77 @@
 package reactivemongo.extensions.dao
 
 import org.joda.time.DateTime
-import reactivemongo.bson._
+import reactivemongo.api.bson._
+
+import scala.util.Success
 
 object Handlers {
 
-	implicit object BSONDateTimeHandler
-		extends BSONReader[BSONDateTime, DateTime]
-		with BSONWriter[DateTime, BSONDateTime] {
+  implicit object BSONDateTimeHandler extends BSONReader[DateTime] with BSONWriter[DateTime] {
 
-		def read(bson: BSONDateTime): DateTime = new DateTime(bson.value)
+    def readTry(bson: BSONValue) = bson.asTry[BSONDateTime].flatMap(_.toLong).map(new DateTime(_))
 
-		def write(date: DateTime) = BSONDateTime(date.getMillis)
-	}
+    def writeTry(date: DateTime) = Success(BSONDateTime(date.getMillis))
+  }
 
-	implicit def MapBSONReader[T](implicit reader: BSONReader[_ <: BSONValue, T]): BSONDocumentReader[Map[String, T]] =
-		(doc: BSONDocument) => {
-			doc.elements.collect {
-				case ele => ele.value.seeAsOpt[T](reader) map {
-					ov => (ele.name, ov)
-				}
-			}.flatten.toMap
-		}
+  implicit def MapBSONReader[T](implicit reader: BSONReader[T]): BSONDocumentReader[Map[String, T]] =
+    (doc: BSONDocument) => {
+      Success(doc.elements.collect {
+        case ele => ele.value.asOpt[T](reader).map(ov => (ele.name, ov))
+      }.flatten.toMap)
+    }
 
-	implicit def MapBSONWriter[T](implicit writer: BSONWriter[T, _ <: BSONValue]): BSONDocumentWriter[Map[String, T]] = (doc: Map[String, T]) => {
-		BSONDocument(doc map (t => (t._1, writer.write(t._2))))
-	}
+  implicit def MapBSONWriter[T](implicit writer: BSONWriter[T]): BSONDocumentWriter[Map[String, T]] =
+    (doc: Map[String, T]) => {
+      Success(BSONDocument(doc.map(t => (t._1, writer.writeOpt(t._2).get))))
+    }
 
-	implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] = (bson: BSONDocument) => {
-		val elements = bson.elements.map { ele =>
-			// assume that all values in the document are BSONDocuments
-			ele.name -> vr.read(ele.value.seeAsTry[BSONDocument].get)
-		}
-		elements.toMap
-	}
+  implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] =
+    (bson: BSONDocument) => {
+      val elements = bson.elements.map { ele =>
+        // assume that all values in the document are BSONDocuments
+        ele.name -> vr.readTry(ele.value.asOpt[BSONDocument].get).get
+      }
+      Success(elements.toMap)
+    }
 
-	implicit def MapWriter[V](implicit vw: BSONDocumentWriter[V]): BSONDocumentWriter[Map[String, V]] = (map: Map[String, V]) => {
-		val elements = map.toStream.map { tuple =>
-			tuple._1 -> vw.write(tuple._2)
-		}
-		BSONDocument(elements)
-	}
+  implicit def MapWriter[V](implicit vw: BSONDocumentWriter[V]): BSONDocumentWriter[Map[String, V]] =
+    (map: Map[String, V]) => {
+      val elements = map.to(LazyList).map { tuple => tuple._1 -> vw.writeTry(tuple._2).get }
+      Success(BSONDocument(elements))
+    }
 
-	implicit object BSONIntegerHandler extends BSONReader[BSONValue, Int] {
-		def read(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
-			case Some(num) => num.toInt
-			case _ => bson match {
-				case doc @ BSONDocument(_) =>
-					doc.getAs[BSONNumberLike]("$int").map(_.toInt).get
-			}
-		}
-	}
+  implicit object BSONIntegerHandler extends BSONReader[Int] {
+    def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
+      case Some(num) => num.toInt
+      case _ =>
+        bson match {
+          case doc @ BSONDocument(_) =>
+            doc.asInstanceOf[BSONDocument].getAsTry[BSONNumberLike]("$int").map(_.toInt).get
+        }
+    }
+  }
 
-	implicit object BSONLongHandler extends BSONReader[BSONValue, Long] {
-		def read(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
-			case Some(num) => num.toLong
-			case _ => bson match {
-				case doc @ BSONDocument(_) =>
-					doc.getAs[BSONNumberLike]("$long").map(_.toLong).get
-			}
-		}
-	}
+  implicit object BSONLongHandler extends BSONReader[Long] {
+    def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
+      case Some(num) => num.toLong
+      case _ =>
+        bson match {
+          case doc @ BSONDocument(_) =>
+            doc.asInstanceOf[BSONDocument].getAsTry[BSONNumberLike]("$long").map(_.toLong).get
+        }
+    }
+  }
 
-	implicit object BSONDoubleHandler extends BSONReader[BSONValue, Double] {
-		def read(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
-			case Some(num) => num.toDouble
-			case _ => bson match {
-				case doc @ BSONDocument(_) =>
-					doc.getAs[BSONNumberLike]("$double").map(_.toDouble).get
-			}
-		}
-	}
+  implicit object BSONDoubleHandler extends BSONReader[Double] {
+    def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
+      case Some(num) => num.toDouble
+      case _ =>
+        bson match {
+          case doc @ BSONDocument(_) =>
+            doc.asInstanceOf[BSONDocument].getAsTry[BSONNumberLike]("$double").map(_.toDouble).get
+        }
+    }
+  }
+
 }

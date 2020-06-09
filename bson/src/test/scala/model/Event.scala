@@ -16,21 +16,13 @@
 
 package reactivemongo.extensions.model
 
-import reactivemongo.bson._
-import reactivemongo.extensions.dao.Handlers._
-import play.api.libs.json.Json
+import reactivemongo.api.bson._
 
-case class Event(
-		_id: String,
-		title: String,
-		organizer: String,
-		location: Location)
+case class Event(_id: String, title: String, organizer: String, location: Location)
 
 case class Location(city: String, place: String)
 
 object Event {
-	import reactivemongo.extensions.dao.Handlers._ // extensions BSON handler
-
-	implicit val locationFormat = Macros.handler[Location]
-	implicit val eventFormat = Macros.handler[Event]
+  implicit val locationFormat = Macros.handler[Location]
+  implicit val eventFormat    = Macros.handler[Event]
 }

@@ -17,82 +17,86 @@
 package reactivemongo.extensions.fixtures
 
 import com.typesafe.config.{ Config, ConfigFactory, ConfigRenderOptions, ConfigResolveOptions }
-import scala.collection.JavaConverters._
+import play.api.libs.json.{ JsObject, Json }
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.extensions.util.Logger
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import reactivemongo.extensions.util.Logger
-import reactivemongo.api.commands.WriteResult
-import play.api.libs.json.{ Json, JsObject }
+import scala.jdk.CollectionConverters._
 
 trait Fixtures[T] {
 
-	protected lazy val renderOptions = ConfigRenderOptions.concise.setJson(true).setFormatted(true)
-	protected lazy val resolveOptions = ConfigResolveOptions.defaults.setAllowUnresolved(true)
-	protected lazy val reserved = Set("_predef")
+  protected lazy val renderOptions  = ConfigRenderOptions.concise.setJson(true).setFormatted(true)
+  protected lazy val resolveOptions = ConfigResolveOptions.defaults.setAllowUnresolved(true)
+  protected lazy val reserved       = Set("_predef")
 
-	def map(document: JsObject): T
-	def bulkInsert(collectionName: String, documents: Stream[T]): Future[Int]
-	def removeAll(collectionName: String): Future[WriteResult]
-	def drop(collectionName: String): Future[Boolean]
+  def map(document: JsObject): T
+  def bulkInsert(collectionName: String, documents: LazyList[T]): Future[Int]
+  def removeAll(collectionName: String): Future[WriteResult]
+  def drop(collectionName: String): Future[Boolean]
 
-	protected def toString(config: Config): String =
-		config.root.render(renderOptions)
+  protected def toString(config: Config): String =
+    config.root.render(renderOptions)
 
-	protected def toJson(config: Config): JsObject =
-		Json.parse(toString(config)).as[JsObject]
+  protected def toJson(config: Config): JsObject =
+    Json.parse(toString(config)).as[JsObject]
 
-	protected def resolveConfig(config: Config): Config = {
-		val resolvedConfig = (config.root.keySet.asScala diff reserved).foldLeft(config) { (config, collectionName) =>
-			val collectionConfig = config.getConfig(collectionName)
+  protected def resolveConfig(config: Config): Config = {
+    val resolvedConfig = config.root.keySet.asScala.diff(reserved).foldLeft(config) { (config, collectionName) =>
+      val collectionConfig = config.getConfig(collectionName)
 
-			val resolvedCollectionConfig = collectionConfig.root.keySet.asScala.foldLeft(collectionConfig) { (_collectionConfig, documentName) =>
-				val documentConfig = _collectionConfig.getConfig(documentName).resolve(resolveOptions)
-				_collectionConfig.withValue(documentName, documentConfig.root)
-			}.resolve(resolveOptions)
+      val resolvedCollectionConfig = collectionConfig.root.keySet.asScala.foldLeft(collectionConfig) {
+        (_collectionConfig, documentName) =>
+          val documentConfig = _collectionConfig.getConfig(documentName).resolve(resolveOptions)
+          _collectionConfig.withValue(documentName, documentConfig.root)
+      }.resolve(resolveOptions)
 
-			config.withValue(collectionName, resolvedCollectionConfig.root)
-		}.resolve
+      config.withValue(collectionName, resolvedCollectionConfig.root)
+    }.resolve
 
-		Logger.debug("Resolved Config =>\n" + toString(resolvedConfig))
-		resolvedConfig
-	}
+    Logger.debug("Resolved Config =>\n" + toString(resolvedConfig))
+    resolvedConfig
+  }
 
-	protected def processCollection(collectionName: String, collectionConfig: Config): Future[Int] = {
-		val documents = collectionConfig.root.keySet.asScala map { documentName =>
-			val documentConfig = collectionConfig.getConfig(documentName)
-			val document = toJson(documentConfig)
-			Logger.debug(s"Processing ${documentName}: ${document}")
-			map(document)
-		}
+  protected def processCollection(collectionName: String, collectionConfig: Config): Future[Int] = {
+    val documents = collectionConfig.root.keySet.asScala.map { documentName =>
+      val documentConfig = collectionConfig.getConfig(documentName)
+      val document       = toJson(documentConfig)
+      Logger.debug(s"Processing ${documentName}: ${document}")
+      map(document)
+    }
 
-		bulkInsert(collectionName, documents.toStream)
-	}
+    bulkInsert(collectionName, documents.to(LazyList))
+  }
 
-	protected def foreachCollection[A](resource: String, resources: String*)(f: (Config, String) => Future[A]): Future[Seq[A]] = {
-		val config = resources.foldLeft(ConfigFactory.parseResources(this.getClass.getClassLoader, resource)) { (config, resource) =>
-			config.withFallback(ConfigFactory.parseResources(this.getClass.getClassLoader, resource))
-		}
+  protected def foreachCollection[A](resource: String, resources: String*)(
+      f: (Config, String) => Future[A]
+  ): Future[Seq[A]] = {
+    val config = resources.foldLeft(ConfigFactory.parseResources(this.getClass.getClassLoader, resource)) {
+      (config, resource) => config.withFallback(ConfigFactory.parseResources(this.getClass.getClassLoader, resource))
+    }
 
-		val resolvedConfig = resolveConfig(config)
+    val resolvedConfig = resolveConfig(config)
 
-		Future.sequence { (resolvedConfig.root.keySet.asScala diff reserved).toSeq map (f(resolvedConfig, _)) }
-	}
+    Future.sequence { resolvedConfig.root.keySet.asScala.diff(reserved).toSeq.map(f(resolvedConfig, _)) }
+  }
 
-	def load(resource: String, resources: String*): Future[Seq[Int]] =
-		foreachCollection(resource, resources: _*) { (config, collectionName) =>
-			Logger.debug(s"Processing ${collectionName}.")
-			processCollection(collectionName, config.getConfig(collectionName))
-		}
+  def load(resource: String, resources: String*): Future[Seq[Int]] =
+    foreachCollection(resource, resources: _*) { (config, collectionName) =>
+      Logger.debug(s"Processing ${collectionName}.")
+      processCollection(collectionName, config.getConfig(collectionName))
+    }
 
-	def removeAll(resource: String, resources: String*): Future[Seq[WriteResult]] = foreachCollection(resource, resources: _*) { (_, collectionName) =>
-		Logger.debug(s"Removing all documents from ${collectionName}.")
-		removeAll(collectionName)
-	}
+  def removeAll(resource: String, resources: String*): Future[Seq[WriteResult]] =
+    foreachCollection(resource, resources: _*) { (_, collectionName) =>
+      Logger.debug(s"Removing all documents from ${collectionName}.")
+      removeAll(collectionName)
+    }
 
-	def dropAll(resource: String, resources: String*): Future[Seq[Boolean]] =
-		foreachCollection(resource, resources: _*) { (_, collectionName) =>
-			Logger.debug(s"Removing all documents from ${collectionName}.")
-			drop(collectionName)
-		}
+  def dropAll(resource: String, resources: String*): Future[Seq[Boolean]] =
+    foreachCollection(resource, resources: _*) { (_, collectionName) =>
+      Logger.debug(s"Removing all documents from ${collectionName}.")
+      drop(collectionName)
+    }
 }
-

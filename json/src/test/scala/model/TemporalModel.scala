@@ -16,44 +16,46 @@
 
 package reactivemongo.extensions.json.model
 
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.api.bson.BSONObjectID
 import reactivemongo.extensions.dao.LifeCycle
 import reactivemongo.extensions.util.Logger
-import reactivemongo.play.json.BSONFormats._
 import play.api.libs.json.Json
 import org.joda.time.DateTime
+import reactivemongo.play.json.compat.bson2json._
+import reactivemongo.play.json.compat._
 import reactivemongo.extensions.json.joda.JodaFormats._
 
 case class TemporalModel(
-		_id: BSONObjectID = BSONObjectID.generate,
-		name: String,
-		surname: String,
-		createdAt: DateTime = DateTime.now,
-		updatedAt: DateTime = DateTime.now)
+    _id: BSONObjectID = BSONObjectID.generate,
+    name: String,
+    surname: String,
+    createdAt: DateTime = DateTime.now,
+    updatedAt: DateTime = DateTime.now
+)
 
 object TemporalModel {
-	implicit val temporalModelFormat = Json.format[TemporalModel]
+  implicit val temporalModelFormat = Json.format[TemporalModel]
 
-	implicit object TemporalModelLifeCycle extends LifeCycle[TemporalModel, BSONObjectID] {
-		def prePersist(model: TemporalModel): TemporalModel = {
-			Logger.debug(s"prePersist $model")
-			model.copy(updatedAt = DateTime.now)
-		}
+  implicit object TemporalModelLifeCycle extends LifeCycle[TemporalModel, BSONObjectID] {
+    def prePersist(model: TemporalModel): TemporalModel = {
+      Logger.debug(s"prePersist $model")
+      model.copy(updatedAt = DateTime.now)
+    }
 
-		def postPersist(model: TemporalModel): Unit = {
-			Logger.debug(s"postPersist $model")
-		}
+    def postPersist(model: TemporalModel): Unit = {
+      Logger.debug(s"postPersist $model")
+    }
 
-		def preRemove(id: BSONObjectID): Unit = {
-			Logger.debug(s"preRemove $id")
-		}
+    def preRemove(id: BSONObjectID): Unit = {
+      Logger.debug(s"preRemove $id")
+    }
 
-		def postRemove(id: BSONObjectID): Unit = {
-			Logger.debug(s"postRemove $id")
-		}
+    def postRemove(id: BSONObjectID): Unit = {
+      Logger.debug(s"postRemove $id")
+    }
 
-		def ensuredIndexes(): Unit = {
-			Logger.debug("ensuredIndexes")
-		}
-	}
+    def ensuredIndexes(): Unit = {
+      Logger.debug("ensuredIndexes")
+    }
+  }
 }

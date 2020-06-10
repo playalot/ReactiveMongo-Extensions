@@ -1,4 +1,3 @@
-import scalariform.formatter.preferences._
 
 name := "reactivemongo-extensions"
 
@@ -24,13 +23,7 @@ lazy val commonSettings = Seq(
   javaOptions in Test ++= Seq("-Xmx512m", "-XX:MaxPermSize=512m"),
   testOptions in Test += Tests.Argument("-oDS"),
   parallelExecution in Test := true,
-  shellPrompt in ThisBuild := Common.prompt,
-  scalariformPreferences := scalariformPreferences.value
-  .setPreference(AlignParameters, true)
-  .setPreference(DoubleIndentConstructorArguments, true)
-  .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-  .setPreference(SpacesAroundMultiImports, true)
-  .setPreference(IndentWithTabs, true))
+  shellPrompt in ThisBuild := Common.prompt)
 
 lazy val publishSettings = Seq(
   organization := "cn.playalot",

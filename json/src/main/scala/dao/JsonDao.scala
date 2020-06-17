@@ -116,7 +116,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
   def find(selector: JsObject = Json.obj(), sort: JsObject = Json.obj("_id" -> 1), page: Int, pageSize: Int)(
       implicit ec: ExecutionContext
   ): Future[List[Model]] = {
-    val from = scala.math.max(1, page) * pageSize
+    val from = page * pageSize
     collection.flatMap(
       _
         .find(selector)

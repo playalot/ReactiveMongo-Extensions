@@ -1,5 +1,3 @@
-import Common.{ playJsonVersion, playReactiveMongoVersion }
-
 name := "reactivemongo-extensions-bson"
 
 libraryDependencies ++= Seq(

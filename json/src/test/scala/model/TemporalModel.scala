@@ -39,7 +39,7 @@ object TemporalModel {
   implicit object TemporalModelLifeCycle extends LifeCycle[TemporalModel, BSONObjectID] {
     def prePersist(model: TemporalModel): TemporalModel = {
       Logger.debug(s"prePersist $model")
-      model.copy(updatedAt = DateTime.now)
+      model.copy(updatedAt = DateTime.now.plusMillis(1))
     }
 
     def postPersist(model: TemporalModel): Unit = {

@@ -21,10 +21,10 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.model.Event
-import reactivemongo.api.DefaultDB
+import reactivemongo.api.DB
 import reactivemongo.extensions.dsl.BsonDsl
 
-class EventBsonDao(_db: Future[DefaultDB]) extends BsonDao[Event, String](_db, "events") with BsonDsl {
+class EventBsonDao(_db: Future[DB]) extends BsonDao[Event, String](_db, "events") with BsonDsl {
 
   def findByTitle(title: String): Future[Option[Event]] = findOne("title".$eq(title))
 

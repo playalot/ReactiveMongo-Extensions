@@ -24,6 +24,7 @@ case class MapModel(_id: BSONObjectID = BSONObjectID.generate, data: Map[String,
 
 object MapModel {
   implicit val mapModelFormat = Json.format[MapModel]
+  implicit val MapModelHandler = Macros.handler[MapModel]
 
   def random(n: Int): Seq[MapModel] = (1 to n).map { index => MapModel(data = Map("count" -> n)) }
 }

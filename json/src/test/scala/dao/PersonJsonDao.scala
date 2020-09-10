@@ -18,12 +18,12 @@ package reactivemongo.extensions.json.dao
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.json.model.Person
-import reactivemongo.api.DefaultDB
+import reactivemongo.api.DB
 
 import scala.concurrent.Future
 import reactivemongo.extensions.json.dsl.JsonDsl
 
-class PersonJsonDao(_db: Future[DefaultDB]) extends JsonDao[Person, String](_db, "persons") with JsonDsl {
+class PersonJsonDao(_db: Future[DB]) extends JsonDao[Person, String](_db, "persons") with JsonDsl {
 
   def findByName(name: String): Future[Option[Person]] = {
     findOne("name".$eq(name))

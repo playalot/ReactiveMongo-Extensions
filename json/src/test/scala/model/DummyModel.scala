@@ -24,6 +24,7 @@ case class DummyModel(_id: BSONObjectID = BSONObjectID.generate, name: String, s
 
 object DummyModel {
   implicit val dummyModelFormat = Json.format[DummyModel]
+  implicit val dummyModelHandler = Macros.handler[DummyModel]
 
   def random(n: Int): Seq[DummyModel] = (1 to n).map { index =>
     DummyModel(name = s"name$index", surname = "surname$index", age = index)

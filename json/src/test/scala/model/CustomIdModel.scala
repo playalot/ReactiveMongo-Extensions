@@ -17,12 +17,14 @@
 package reactivemongo.extensions.json.model
 
 import play.api.libs.json.Json
+import reactivemongo.api.bson._
 import reactivemongo.extensions.util.Misc.UUID
 
 case class CustomIdModel(_id: String = UUID(), name: String, surname: String, age: Int)
 
 object CustomIdModel {
   implicit val customIdModelFormat = Json.format[CustomIdModel]
+  implicit val customIdModelHandler = Macros.handler[CustomIdModel]
 
   def random(n: Int): Seq[CustomIdModel] = (1 to n).map { index =>
     CustomIdModel(name = s"name$index", surname = "surname$index", age = index)

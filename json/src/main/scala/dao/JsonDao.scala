@@ -27,6 +27,7 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.extensions.dao.{Dao, LifeCycle, ReflexiveLifeCycle}
 import reactivemongo.extensions.json.dsl.JsonDsl._
+import reactivemongo.play.json.compat._
 
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
@@ -79,10 +80,16 @@ import scala.util.Random // Required import
  *  @tparam Model Type of the model that this DAO uses.
  *  @tparam ID Type of the ID field of the model.
  */
-abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], collectionName: String)(
-    implicit lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
+abstract class JsonDao[Model, ID: Writes](database: => Future[DB], collectionName: String)(
+    implicit fmt: OFormat[Model],
+    modelReader: BSONDocumentReader[Model],
+    modelWriter: BSONDocumentWriter[Model],
+    lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
     ec: ExecutionContext
 ) extends Dao[BSONCollection, JsObject, Model, ID, OWrites](database, collectionName) {
+
+  // Import BSON to JSON extended syntax (default)
+  import json2bson._ // Required import
 
   def ensureIndexes()(implicit ec: ExecutionContext): Future[Iterable[Boolean]] = Future.sequence({
     autoIndexes.map { index => collection.flatMap(_.indexesManager.ensure(index)) }
@@ -228,8 +235,11 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 }
 
 object JsonDao {
-  def apply[Model: OFormat, ID: Writes](db: => Future[DB], collectionName: String)(
-      implicit lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
+  def apply[Model, ID: Writes](db: => Future[DB], collectionName: String)(
+      implicit fmt: OFormat[Model],
+      modelReader: BSONDocumentReader[Model],
+      modelWriter: BSONDocumentWriter[Model],
+      lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
       ec: ExecutionContext
   ): JsonDao[Model, ID] = new JsonDao[Model, ID](db, collectionName) {}
 

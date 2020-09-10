@@ -17,9 +17,12 @@
 package reactivemongo.extensions.json.model
 
 import play.api.libs.json.Json
+import reactivemongo.api.bson.Macros
 
 case class Person(_id: String, name: String, surname: String, fullname: String, age: Int, country: String)
 
 object Person {
   implicit val personFormat = Json.format[Person]
+  implicit val PersonHandler = Macros.handler[Person]
+
 }

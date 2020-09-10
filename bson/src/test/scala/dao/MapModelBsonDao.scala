@@ -19,7 +19,7 @@ package reactivemongo.extensions.dao
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.model.MapModel
 import reactivemongo.api.bson.BSONObjectID
-import reactivemongo.api.commands.WriteConcern
+import reactivemongo.api.WriteConcern
 import reactivemongo.extensions.util.Misc.UUID
 
 class MapModelBsonDao extends BsonDao[MapModel, BSONObjectID](MongoContext.db, "dummy-" + UUID()) {

@@ -16,17 +16,17 @@
 
 package reactivemongo.extensions.json.model
 
-import reactivemongo.api.bson.BSONObjectID
+import reactivemongo.api.bson.{BSONObjectID, BSONReader, Macros}
 import reactivemongo.extensions.dao.LifeCycle
 import reactivemongo.extensions.util.Logger
 import play.api.libs.json.Json
 import org.joda.time.DateTime
 import reactivemongo.play.json.compat.bson2json._
-import reactivemongo.play.json.compat._
+import reactivemongo.play.json.compat.json2bson._
 import reactivemongo.extensions.json.joda.JodaFormats._
 
 case class TemporalModel(
-    _id: BSONObjectID = BSONObjectID.generate,
+    _id: BSONObjectID = BSONObjectID.generate(),
     name: String,
     surname: String,
     createdAt: DateTime = DateTime.now,
@@ -35,6 +35,8 @@ case class TemporalModel(
 
 object TemporalModel {
   implicit val temporalModelFormat = Json.format[TemporalModel]
+//  implicit val jodaDateTimeHandler = BSONReader[DateTime]
+  implicit val temporalModelHandler = Macros.handler[TemporalModel]
 
   implicit object TemporalModelLifeCycle extends LifeCycle[TemporalModel, BSONObjectID] {
     def prePersist(model: TemporalModel): TemporalModel = {

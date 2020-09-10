@@ -26,8 +26,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import reactivemongo.api.bson._
 import reactivemongo.api.Cursor
-import reactivemongo.api.DefaultDB
-import reactivemongo.api.QueryOpts
+import reactivemongo.api.DB
 import reactivemongo.api.ReadConcern
 import reactivemongo.api.WriteConcern
 import reactivemongo.api.indexes.Index
@@ -85,7 +84,7 @@ import reactivemongo.akkastream.cursorProducer
  *  @tparam Model Type of the model that this DAO uses.
  *  @tparam ID Type of the ID field of the model.
  */
-abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: String)(
+abstract class BsonDao[Model, ID](db: => Future[DB], collectionName: String)(
     implicit modelReader: BSONDocumentReader[Model],
     modelWriter: BSONDocumentWriter[Model],
     idWriter: BSONWriter[ID],
@@ -126,7 +125,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
       _
         .find(selector)
         .sort(sort)
-        .options(QueryOpts(skipN = from, batchSizeN = pageSize))
+        .skip(from)
         .cursor[Model]()
         .collect[List](pageSize, Cursor.FailOnError[List[Model]]())
     )
@@ -159,7 +158,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
     for {
       count <- count(selector)
       index = if (count == 0) 0 else Random.nextInt(count)
-      random <- collection.flatMap(_.find(selector).options(QueryOpts(skipN = index, batchSizeN = 1)).one[Model])
+      random <- collection.flatMap(_.find(selector).skip(index).one[Model])
     } yield random
 
   def insert(model: Model, writeConcern: WriteConcern = defaultWriteConcern)(
@@ -254,7 +253,7 @@ abstract class BsonDao[Model, ID](db: => Future[DefaultDB], collectionName: Stri
 }
 
 object BsonDao {
-  def apply[Model, ID](db: => Future[DefaultDB], collectionName: String)(
+  def apply[Model, ID](db: => Future[DB], collectionName: String)(
       implicit modelReader: BSONDocumentReader[Model],
       modelWriter: BSONDocumentWriter[Model],
       idWriter: BSONWriter[ID],

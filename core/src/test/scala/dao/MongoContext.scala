@@ -16,7 +16,7 @@
 
 package reactivemongo.extensions.dao
 
-import reactivemongo.api.DefaultDB
+import reactivemongo.api.DB
 import reactivemongo.api.AsyncDriver
 import reactivemongo.extensions.util.Misc.UUID
 
@@ -28,7 +28,7 @@ import scala.concurrent.duration._
 object MongoContext {
   val driver                      = new AsyncDriver
   val connection                  = driver.connect(List("localhost"))
-  def db: Future[DefaultDB]       = connection.flatMap(_.database("test-reactivemongo-extensions"))
-  def randomDb: Future[DefaultDB] = connection.flatMap(_.database(UUID()))
+  def db: Future[DB]       = connection.flatMap(_.database("test-reactivemongo-extensions"))
+  def randomDb: Future[DB] = connection.flatMap(_.database(UUID()))
   def syncDb                      = Await.result(connection.flatMap(_.database("test-reactivemongo-extensions")), 10.seconds)
 }

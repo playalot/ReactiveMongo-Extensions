@@ -17,30 +17,20 @@
 package reactivemongo.extensions.json.dao
 
 import akka.stream.Materializer
-
-import scala.util.Random
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.concurrent.duration._
-import reactivemongo.api.Cursor
-import reactivemongo.api.DB
-import reactivemongo.api.DefaultDB
-import reactivemongo.api.QueryOpts
-import reactivemongo.api.ReadConcern
-import reactivemongo.api.WriteConcern
-import reactivemongo.api.indexes.Index
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.extensions.dao.Dao
-import reactivemongo.extensions.dao.LifeCycle
-import reactivemongo.extensions.dao.ReflexiveLifeCycle
-import reactivemongo.extensions.json.dsl.JsonDsl._
 import play.api.libs.json._
-import reactivemongo.api.Cursor.FailOnError
-import reactivemongo.play.json.collection.JSONCollection
 import reactivemongo.akkastream.cursorProducer
-import reactivemongo.play.json._
-import reactivemongo.play.json.collection._
+import reactivemongo.api.Cursor.FailOnError
+import reactivemongo.api.bson._
+import reactivemongo.api.{Cursor, DB, ReadConcern, WriteConcern}
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.indexes.Index
+import reactivemongo.extensions.dao.{Dao, LifeCycle, ReflexiveLifeCycle}
+import reactivemongo.extensions.json.dsl.JsonDsl._
+
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration._
+import scala.util.Random // Required import
 
 /** A DAO implementation that operates on JSONCollection using JsObject.
  *
@@ -92,7 +82,7 @@ import reactivemongo.play.json.collection._
 abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], collectionName: String)(
     implicit lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
     ec: ExecutionContext
-) extends Dao[JSONCollection, JsObject, Model, ID, OWrites](database, collectionName) {
+) extends Dao[BSONCollection, JsObject, Model, ID, OWrites](database, collectionName) {
 
   def ensureIndexes()(implicit ec: ExecutionContext): Future[Iterable[Boolean]] = Future.sequence({
     autoIndexes.map { index => collection.flatMap(_.indexesManager.ensure(index)) }
@@ -113,15 +103,13 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
   def findByIds(ids: ID*)(implicit ec: ExecutionContext): Future[List[Model]] =
     findAll("_id".$in(ids: _*))
 
-  def find(selector: JsObject = Json.obj(), sort: JsObject = Json.obj("_id" -> 1), page: Int, pageSize: Int)(
-      implicit ec: ExecutionContext
-  ): Future[List[Model]] = {
+  def find(selector: JsObject = Json.obj(), sort: JsObject = Json.obj("_id" -> 1), page: Int, pageSize: Int)
+          (implicit ec: ExecutionContext): Future[List[Model]] = {
     val from = page * pageSize
-    collection.flatMap(
-      _
+    collection.flatMap(_
         .find(selector)
         .sort(sort)
-        .options(QueryOpts(skipN = from, batchSizeN = pageSize))
+        .skip(from)
         .cursor[Model]()
         .collect[List](pageSize, Cursor.FailOnError[List[Model]]())
     )
@@ -131,7 +119,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
       implicit ec: ExecutionContext
   ): Future[List[Model]] = {
     collection.flatMap(
-      _.find(selector).sort(sort).cursor[Model]().collect[List](Int.MaxValue, FailOnError[List[Model]]())
+      _.find(selector).sort(sort).cursor[Model]().collect[List](-1, FailOnError[List[Model]]())
     )
   }
 
@@ -152,7 +140,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
   def findRandom(selector: JsObject = Json.obj())(implicit ec: ExecutionContext): Future[Option[Model]] = for {
     count <- count(selector)
     index = Random.nextInt(count)
-    random <- collection.flatMap(_.find(selector).options(QueryOpts(skipN = index, batchSizeN = 1)).one[Model])
+    random <- collection.flatMap(_.find(selector).skip(index).one[Model])
   } yield random
 
   def insert(model: Model, writeConcern: WriteConcern = defaultWriteConcern)(
@@ -240,7 +228,7 @@ abstract class JsonDao[Model: OFormat, ID: Writes](database: => Future[DB], coll
 }
 
 object JsonDao {
-  def apply[Model: OFormat, ID: Writes](db: => Future[DefaultDB], collectionName: String)(
+  def apply[Model: OFormat, ID: Writes](db: => Future[DB], collectionName: String)(
       implicit lifeCycle: LifeCycle[Model, ID] = new ReflexiveLifeCycle[Model, ID],
       ec: ExecutionContext
   ): JsonDao[Model, ID] = new JsonDao[Model, ID](db, collectionName) {}

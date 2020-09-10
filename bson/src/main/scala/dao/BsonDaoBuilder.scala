@@ -16,13 +16,13 @@
 
 package reactivemongo.extensions.dao
 
-import reactivemongo.api.DefaultDB
+import reactivemongo.api.DB
 import reactivemongo.api.bson._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class BsonDaoBuilder[Model, ID](db: => Future[DefaultDB]) {
+class BsonDaoBuilder[Model, ID](db: => Future[DB]) {
   def apply(collectionName: String)(
       implicit modelReader: BSONDocumentReader[Model],
       modelWriter: BSONDocumentWriter[Model],
@@ -36,7 +36,7 @@ class BsonDaoBuilder[Model, ID](db: => Future[DefaultDB]) {
 }
 
 object BsonDaoBuilder {
-  def apply[Model, ID](db: => Future[DefaultDB]): BsonDaoBuilder[Model, ID] = {
+  def apply[Model, ID](db: => Future[DB]): BsonDaoBuilder[Model, ID] = {
     new BsonDaoBuilder[Model, ID](db)
   }
 }

@@ -83,7 +83,6 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
     name = name,
     unique = unique,
     background = background,
-    dropDups = false,
     sparse = sparse,
     expireAfterSeconds = None,
     storageEngine = None,
@@ -144,9 +143,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
    *  @param page 1 based page number.
    *  @param pageSize Maximum number of elements in each page.
    */
-  def find(selector: Structure, sort: Structure, page: Int, pageSize: Int)(
-      implicit ec: ExecutionContext
-  ): Future[List[Model]]
+  def find(selector: Structure, sort: Structure, page: Int, pageSize: Int)(implicit ec: ExecutionContext): Future[List[Model]]
 
   /** Retrieves all models matching the given selector.
    *
@@ -236,7 +233,7 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
   /** Inserts the document, or updates it if it already exists in the collection.
    *
 	 *  @param model The model to save.
-   *  @param writeConcern the [[reactivemongo.api.commands.GetLastError]] command message to send in order to control
+   *  @param writeConcern the command message to send in order to control
    *                  how the document is inserted. Defaults to defaultWriteConcern.
    */
   def save(id: ID, model: Model, writeConcern: WriteConcern)(implicit ec: ExecutionContext): Future[WriteResult]

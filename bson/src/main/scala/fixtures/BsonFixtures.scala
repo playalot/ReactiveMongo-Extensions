@@ -17,16 +17,15 @@
 package reactivemongo.extensions.fixtures
 
 import play.api.libs.json.JsObject
-import reactivemongo.api.DefaultDB
+import reactivemongo.api.DB
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
-import reactivemongo.api.bson.compat._
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.play.json.compat.ExtendedJsonConverters
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-class BsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) extends Fixtures[BSONDocument] {
+class BsonFixtures(db: => Future[DB])(implicit ec: ExecutionContext) extends Fixtures[BSONDocument] {
   def map(document: JsObject): BSONDocument = ExtendedJsonConverters.toDocument(document)
 
   def bulkInsert(collectionName: String, documents: LazyList[BSONDocument]): Future[Int] =
@@ -41,5 +40,5 @@ class BsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) exte
 }
 
 object BsonFixtures {
-  def apply(db: Future[DefaultDB])(implicit ec: ExecutionContext): BsonFixtures = new BsonFixtures(db)
+  def apply(db: Future[DB])(implicit ec: ExecutionContext): BsonFixtures = new BsonFixtures(db)
 }

@@ -16,31 +16,31 @@
 
 package reactivemongo.extensions.json.fixtures
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import reactivemongo.extensions.fixtures.Fixtures
-import reactivemongo.api.DefaultDB
+import play.api.libs.json.{JsObject, Json}
+import reactivemongo.api.DB
+import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.play.json._
-import collection.JSONCollection
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import reactivemongo.extensions.fixtures.Fixtures
+import reactivemongo.play.json.compat._
+import reactivemongo.play.json.compat.json2bson._
 
-class JsonFixtures(db: => Future[DefaultDB])(implicit ec: ExecutionContext) extends Fixtures[JsObject] {
+import scala.concurrent.{ExecutionContext, Future}
+
+class JsonFixtures(db: => Future[DB])(implicit ec: ExecutionContext) extends Fixtures[JsObject] {
 
   def map(document: JsObject): JsObject = document
 
   def bulkInsert(collectionName: String, documents: LazyList[JsObject]): Future[Int] =
-    db.flatMap(_.collection[JSONCollection](collectionName).insert(ordered = true).many(documents).map(_.n))
+    db.flatMap(_.collection[BSONCollection](collectionName).insert(ordered = true).many(documents).map(_.n))
 
   def removeAll(collectionName: String): Future[WriteResult] =
-    db.flatMap(_.collection[JSONCollection](collectionName).delete().one(Json.obj()))
+    db.flatMap(_.collection[BSONCollection](collectionName).delete().one(Json.obj()))
 
   def drop(collectionName: String): Future[Boolean] =
-    db.flatMap(_.collection[JSONCollection](collectionName).drop(failIfNotFound = true))
+    db.flatMap(_.collection[BSONCollection](collectionName).drop(failIfNotFound = true))
 
 }
 
 object JsonFixtures {
-  def apply(db: Future[DefaultDB])(implicit ec: ExecutionContext): JsonFixtures = new JsonFixtures(db)
+  def apply(db: Future[DB])(implicit ec: ExecutionContext): JsonFixtures = new JsonFixtures(db)
 }

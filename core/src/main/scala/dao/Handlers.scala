@@ -30,33 +30,6 @@ object Handlers {
     def writeTry(date: DateTime) = Success(BSONDateTime(date.getMillis))
   }
 
-  implicit def MapBSONReader[T](implicit reader: BSONReader[T]): BSONDocumentReader[Map[String, T]] =
-    (doc: BSONDocument) => {
-      Success(doc.elements.collect {
-        case ele => ele.value.asOpt[T](reader).map(ov => (ele.name, ov))
-      }.flatten.toMap)
-    }
-
-  implicit def MapBSONWriter[T](implicit writer: BSONWriter[T]): BSONDocumentWriter[Map[String, T]] =
-    (doc: Map[String, T]) => {
-      Success(BSONDocument(doc.map(t => (t._1, writer.writeOpt(t._2).get))))
-    }
-
-  implicit def MapReader[V](implicit vr: BSONDocumentReader[V]): BSONDocumentReader[Map[String, V]] =
-    (bson: BSONDocument) => {
-      val elements = bson.elements.map { ele =>
-        // assume that all values in the document are BSONDocuments
-        ele.name -> vr.readTry(ele.value.asOpt[BSONDocument].get).get
-      }
-      Success(elements.toMap)
-    }
-
-  implicit def MapWriter[V](implicit vw: BSONDocumentWriter[V]): BSONDocumentWriter[Map[String, V]] =
-    (map: Map[String, V]) => {
-      val elements = map.to(LazyList).map { tuple => tuple._1 -> vw.writeTry(tuple._2).get }
-      Success(BSONDocument(elements))
-    }
-
   implicit object BSONIntegerHandler extends BSONReader[Int] {
     def readTry(bson: BSONValue) = bson.asOpt[BSONNumberLike] match {
       case Some(num) => num.toInt

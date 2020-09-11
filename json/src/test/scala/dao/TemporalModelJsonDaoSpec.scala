@@ -16,10 +16,13 @@
 
 package reactivemongo.extensions.json.dao
 
+import org.joda.time.DateTime
 import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.SpanSugar._
 import reactivemongo.extensions.json.model.TemporalModel
+import reactivemongo.extensions.json.model.TemporalModel._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

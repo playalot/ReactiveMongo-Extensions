@@ -27,17 +27,19 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsValue
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.api.bson.BSONObjectID
 import reactivemongo.extensions.dao.MongoContext
 import reactivemongo.extensions.json.dsl.JsonDsl._
 import reactivemongo.extensions.util.Logger
 import reactivemongo.extensions.Implicits._
+
 import scala.concurrent.Future
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import reactivemongo.play.json.compat.bson2json.fromWriter
+import reactivemongo.play.json.compat.json2bson.{toDocumentReader, toDocumentWriter}
 
 class DynamicJsonDaoSpec
     extends AnyFlatSpec

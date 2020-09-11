@@ -18,7 +18,6 @@ package reactivemongo.extensions.json.dao
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.extensions.json.model.DummyModel
-import reactivemongo.extensions.json.model.DummyModel.dummyModelFormat
 import reactivemongo.extensions.dao.MongoContext
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.bson.BSONObjectID

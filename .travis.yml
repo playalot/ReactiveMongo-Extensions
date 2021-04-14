@@ -3,10 +3,14 @@ dist: bionic
 sudo: true
 script: sbt ++$TRAVIS_SCALA_VERSION 'test'
 scala:
-  - 2.13.2
+  - 2.13.5
 jdk:
   - oraclejdk9
 services: mongodb
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt
 before_script:
   - sleep 15
   - sudo chmod +x /usr/local/bin/sbt

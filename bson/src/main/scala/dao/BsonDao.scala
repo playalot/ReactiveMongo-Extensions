@@ -18,6 +18,7 @@ package reactivemongo.extensions.dao
 
 import akka.stream.Materializer
 import akka.stream.scaladsl.Sink
+import play.api.libs.json.{ JsObject, Json }
 
 import scala.util.Random
 import scala.concurrent.Await
@@ -25,10 +26,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import reactivemongo.api.bson._
-import reactivemongo.api.Cursor
-import reactivemongo.api.DB
-import reactivemongo.api.ReadConcern
-import reactivemongo.api.WriteConcern
+import reactivemongo.api.{ Collation, Cursor, DB, ReadConcern, WriteConcern }
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.extensions.dsl.BsonDsl._
@@ -124,6 +122,33 @@ abstract class BsonDao[Model, ID](db: => Future[DB], collectionName: String)(
     collection.flatMap(
       _
         .find(selector)
+        .sort(sort)
+        .skip(from)
+        .cursor[Model]()
+        .collect[List](pageSize, Cursor.FailOnError[List[Model]]())
+    )
+  }
+
+  def findOneCollation(
+      selector: BSONDocument = BSONDocument.empty,
+      collation: Collation
+  )(implicit ec: ExecutionContext): Future[Option[Model]] =
+    collection.flatMap(_.find(selector).collation(collation).one[Model])
+
+  def findCollation(
+      selector: BSONDocument = BSONDocument.empty,
+      sort: BSONDocument = BSONDocument("_id" -> 1),
+      page: Int,
+      pageSize: Int,
+      collation: Collation
+  )(
+      implicit ec: ExecutionContext
+  ): Future[List[Model]] = {
+    val from = page * pageSize
+    collection.flatMap(
+      _
+        .find(selector)
+        .collation(collation)
         .sort(sort)
         .skip(from)
         .cursor[Model]()

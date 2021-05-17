@@ -18,7 +18,7 @@ package reactivemongo.extensions.dao
 
 import akka.stream.Materializer
 import reactivemongo.api.bson.BSONDocument
-import reactivemongo.api.{ Collection, CollectionProducer, DB, WriteConcern }
+import reactivemongo.api.{ Collation, Collection, CollectionProducer, DB, WriteConcern }
 import reactivemongo.api.bson.collection.BSONSerializationPack
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{ Index, IndexType }
@@ -143,7 +143,15 @@ abstract class Dao[C <: Collection: CollectionProducer, Structure, Model, ID, Wr
    *  @param page 1 based page number.
    *  @param pageSize Maximum number of elements in each page.
    */
-  def find(selector: Structure, sort: Structure, page: Int, pageSize: Int)(implicit ec: ExecutionContext): Future[List[Model]]
+  def find(selector: Structure, sort: Structure, page: Int, pageSize: Int)(
+      implicit ec: ExecutionContext
+  ): Future[List[Model]]
+
+  def findOneCollation(selector: Structure, collation: Collation)(implicit ec: ExecutionContext): Future[Option[Model]]
+
+  def findCollation(selector: Structure, sort: Structure, page: Int, pageSize: Int, collation: Collation)(
+      implicit ec: ExecutionContext
+  ): Future[List[Model]]
 
   /** Retrieves all models matching the given selector.
    *

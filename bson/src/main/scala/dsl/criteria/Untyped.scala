@@ -68,35 +68,14 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(criteria, criteria, criteria, criteria, criteria, criteria, criteria, criteria, criteria, criteria, criteria);
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -116,18 +95,7 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
           Untyped
       ) => Expression
   ): Expression =
@@ -149,20 +117,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -184,21 +140,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -221,22 +164,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -260,23 +189,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -301,24 +215,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -344,25 +242,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -389,26 +270,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -436,27 +299,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(
@@ -485,28 +329,8 @@ object Untyped {
 
   def where(
       block: (
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped,
-          Untyped
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped,
+          Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped, Untyped
       ) => Expression
   ): Expression =
     block(

@@ -16,7 +16,7 @@
 
 package reactivemongo.extensions.json.fixtures
 
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import reactivemongo.api.DB
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.commands.WriteResult
@@ -24,7 +24,7 @@ import reactivemongo.extensions.fixtures.Fixtures
 import reactivemongo.play.json.compat._
 import reactivemongo.play.json.compat.json2bson._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 class JsonFixtures(db: => Future[DB])(implicit ec: ExecutionContext) extends Fixtures[JsObject] {
 

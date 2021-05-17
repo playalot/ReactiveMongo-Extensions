@@ -19,7 +19,7 @@ package reactivemongo.extensions.json.dao
 import play.api.libs.json.OFormat
 import play.api.libs.json.Writes
 import reactivemongo.api.DB
-import reactivemongo.api.bson.{BSONDocumentReader, BSONDocumentWriter}
+import reactivemongo.api.bson.{ BSONDocumentReader, BSONDocumentWriter }
 import reactivemongo.extensions.dao.LifeCycle
 import reactivemongo.extensions.dao.ReflexiveLifeCycle
 

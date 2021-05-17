@@ -21,15 +21,15 @@ import play.api.libs.json._
 import reactivemongo.akkastream.cursorProducer
 import reactivemongo.api.Cursor.FailOnError
 import reactivemongo.api.bson._
-import reactivemongo.api.{Cursor, DB, ReadConcern, WriteConcern}
+import reactivemongo.api.{ Collation, Cursor, DB, ReadConcern, WriteConcern }
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
-import reactivemongo.extensions.dao.{Dao, LifeCycle, ReflexiveLifeCycle}
+import reactivemongo.extensions.dao.{ Dao, LifeCycle, ReflexiveLifeCycle }
 import reactivemongo.extensions.json.dsl.JsonDsl._
 import reactivemongo.play.json.compat._
 
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.Random // Required import
 
@@ -110,11 +110,38 @@ abstract class JsonDao[Model, ID: Writes](database: => Future[DB], collectionNam
   def findByIds(ids: ID*)(implicit ec: ExecutionContext): Future[List[Model]] =
     findAll("_id".$in(ids: _*))
 
-  def find(selector: JsObject = Json.obj(), sort: JsObject = Json.obj("_id" -> 1), page: Int, pageSize: Int)
-          (implicit ec: ExecutionContext): Future[List[Model]] = {
+  def find(selector: JsObject = Json.obj(), sort: JsObject = Json.obj("_id" -> 1), page: Int, pageSize: Int)(
+      implicit ec: ExecutionContext
+  ): Future[List[Model]] = {
     val from = page * pageSize
-    collection.flatMap(_
+    collection.flatMap(
+      _
         .find(selector)
+        .sort(sort)
+        .skip(from)
+        .cursor[Model]()
+        .collect[List](pageSize, Cursor.FailOnError[List[Model]]())
+    )
+  }
+
+  def findOneCollation(selector: JsObject = Json.obj(), collation: Collation)(
+      implicit ec: ExecutionContext
+  ): Future[Option[Model]] = collection.flatMap(_.find(selector).collation(collation).one[Model])
+
+  def findCollation(
+      selector: JsObject = Json.obj(),
+      sort: JsObject = Json.obj("_id" -> 1),
+      page: Int,
+      pageSize: Int,
+      collation: Collation
+  )(
+      implicit ec: ExecutionContext
+  ): Future[List[Model]] = {
+    val from = page * pageSize
+    collection.flatMap(
+      _
+        .find(selector)
+        .collation(collation)
         .sort(sort)
         .skip(from)
         .cursor[Model]()

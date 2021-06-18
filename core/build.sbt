@@ -8,6 +8,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % Common.playJsonVersion,
   "com.typesafe" % "config" % "1.4.1",
   "joda-time" % "joda-time" % "2.10.10",
-  "org.slf4j" % "slf4j-api" % "1.7.30",
+  "org.slf4j" % "slf4j-api" % "1.7.31",
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
   "org.scalatest" %% "scalatest" % "3.2.9" % "test")

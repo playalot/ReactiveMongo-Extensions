@@ -9,5 +9,5 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.4.1",
   "joda-time" % "joda-time" % "2.10.10",
   "org.slf4j" % "slf4j-api" % "1.7.30",
-  "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
+  "ch.qos.logback" % "logback-classic" % "1.2.4" % "test",
   "org.scalatest" %% "scalatest" % "3.2.9" % "test")
